@@ -110,7 +110,7 @@ end, "Disable autocommenting new lines")
 
 -- Override file detection for common patterns
 
-autocmd(editor_behavior, "BufRead,BufNewFile", "*.md", function()
+autocmd(editor_behavior, { "BufRead", "BufNewFile" }, "*.md", function()
 
 vim.bo.filetype = "markdown"
 
@@ -126,7 +126,7 @@ end, "Resize splits when window is resized")
 
 -- Check if file changed on disk and reload
 
-autocmd(editor_behavior, "FocusGained,BufEnter,CursorHold,CursorHoldI", "*", function()
+autocmd(editor_behavior, { "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, "*", function()
 
 if not vim.bo.readonly and vim.fn.bufname() ~= "" and vim.bo.buftype == "" then
 
@@ -196,7 +196,7 @@ end, "Show diagnostic popup on cursor hold")
 
 -- Format on save for supported filetypes
 
-autocmd(lsp_behavior, "BufWritePre", "*.lua,*.py,*.js,*.jsx,*.ts,*.tsx,*.json,*.go,*.rs", function()
+autocmd(lsp_behavior, "BufWritePre", { "*.lua", "*.py", "*.js", "*.jsx", "*.ts", "*.tsx", "*.json", "*.go", "*.rs" }, function()
 
 -- Skip formatting on large files
 
