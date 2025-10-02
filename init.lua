@@ -34,7 +34,7 @@ Last updated: 2025
 
 vim.g.mapleader = " "
 
-vim.g.maplocalleader = ","
+vim.g.maplocalleader = "\\"
 
 -- Load core modules with safety checks
 

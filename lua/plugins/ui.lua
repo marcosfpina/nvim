@@ -1668,23 +1668,4 @@ keys = {
 
 },
 
--- Core icons used throughout the config
-
-{
-
-"core.icons",
-
-dir = "", -- Empty dir as this is a virtual plugin
-
-lazy = true,
-
-init = function()
-
-require("core.icons")
-
-end,
-
-},
-
 }
-
