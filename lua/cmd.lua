@@ -1,11 +1,8 @@
 local keymap = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
--- Navigation Chaos
-keymap("n", "<leader>ff", ":Telescope find_files<CR>", opts)
-keymap("n", "<leader>fg", ":Telescope live_grep<CR>", opts)
-keymap("n", "<leader>fb", ":Telescope buffers<CR>", opts)
-keymap("n", "<leader>fh", ":Telescope help_tags<CR>", opts)
+-- NOTE: Telescope keymaps are now configured in lua/plugins/telescope.lua
+-- with proper lazy loading and extensive key bindings
 
 -- LSP Chaos Control
 keymap("n", "gd", vim.lsp.buf.definition, opts)

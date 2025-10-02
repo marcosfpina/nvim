@@ -44,14 +44,15 @@ nvim/
 ## Plugin Organization
 
 ### `/lua/plugins/`
-- **`init.lua`**: Central plugin loader using lazy.nvim with performance optimization
-- **`lsp.lua`**: LSP configurations, Mason server management, diagnostics
+- **`init.lua`**: Core plugins (plenary, dressing, persistence, better-escape, surround, comment, autopairs, mini.ai, colorizer, gitsigns, which-key)
+- **`ui.lua`**: UI enhancements (tokyonight, devicons, lualine, bufferline, bufdelete, indent-blankline, dashboard, neoscroll, notify, ufo folding, mini.animate, vim-maximizer)
+- **`telescope.lua`**: Telescope fuzzy finder with 8+ extensions (fzf-native, file-browser, ui-select, live-grep-args, project, frecency, undo, symbols) and Trouble.nvim integration
+- **`lsp.lua`**: LSP configurations, Mason server management, diagnostics, lsp_signature, schemastore, neodev, navic
 - **`mcp.lua`**: Model Context Protocol integrations and server configurations
 - **`ai.lua`**: AI and LLM integrations (Copilot, ChatGPT, local models)
 - **`completion.lua`**: nvim-cmp setup with multiple sources and snippets
 - **`git.lua`**: Git tools (gitsigns, fugitive, diffview)
 - **`debug.lua`**: DAP debugging tools and configurations
-- **`navigation.lua`**: Telescope, project.nvim, file finding
 - **`explorer.lua`**: File explorer configuration (neo-tree or nvim-tree)
 - **`terminal.lua`**: Terminal integration with toggleterm
 - **`treesitter.lua`**: Syntax highlighting and code manipulation
@@ -173,17 +174,60 @@ Project templates for quick initialization:
 - Configuration files
 - CI/CD templates
 
+## System Environment
+
+### NixOS Configuration
+This configuration is designed for NixOS systems. Key considerations:
+
+#### Required System Packages
+Essential packages for full functionality (add to configuration.nix or home-manager):
+```nix
+environment.systemPackages = with pkgs; [
+  # Core tools
+  ripgrep        # Required for Telescope live grep
+  fd             # Fast file finding
+  gnumake        # Build telescope-fzf-native
+  gcc            # Compile native extensions
+  
+  # Optional but recommended
+  tree-sitter    # Syntax parsing
+  sqlite         # Frecency database
+  git            # Version control
+  nodejs         # LSP servers
+];
+```
+
+#### Telescope Dependencies
+The Telescope configuration in `lua/plugins/telescope.lua` requires:
+- **ripgrep** - Live grep, file searching
+- **fd** - Fast file discovery (optional but recommended)
+- **make + gcc** - Building telescope-fzf-native.nvim for performance
+
+#### Extension Build Process
+Some Telescope extensions require compilation:
+- telescope-fzf-native.nvim builds automatically via lazy.nvim
+- Ensure `make` and `gcc` are available in your NixOS configuration
+- SQLite support for frecency extension (auto-handled by lazy.nvim)
+
+#### LSP Server Installation
+LSP servers are managed through Mason in `lua/plugins/lsp.lua`:
+- Mason handles automatic installation of language servers
+- Some servers may need additional system packages via Nix
+- Check Mason logs if installation fails: `:Mason` → `g?` for help
+
 ## Performance Considerations
 
 ### Lazy Loading Strategy
 - Plugins loaded based on events (BufReadPre, BufNewFile, VeryLazy)
 - Conditional loading based on file types
 - Optimized startup time with strategic plugin loading
+- Telescope loads on command (`:Telescope`) or keymap trigger
 
 ### Memory Management
 - Disabled unnecessary providers
 - Optimized treesitter configurations
 - Efficient LSP client management
+- Native FZF sorter for faster Telescope filtering
 
 ## Development Guidelines
 
