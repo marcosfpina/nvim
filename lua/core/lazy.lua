@@ -8,23 +8,34 @@ local is_nixos = vim.fn.executable("nix") == 1 or vim.env.NIX_PATH ~= nil
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
 -- Check if lazy.nvim is available before trying to use it
-local lazy_available = false
+local lazy_ok = false
+local lazy_err = nil
 
 -- Try to find lazy.nvim in different locations
 if vim.loop.fs_stat(lazypath) then
   vim.opt.rtp:prepend(lazypath)
-  lazy_available = pcall(require, "lazy")
+  lazy_ok, lazy_err = pcall(require, "lazy")
+
+  if not lazy_ok then
+    -- Log detailed error for debugging
+    if _G.log then
+      _G.log.error("Failed to load lazy.nvim: " .. tostring(lazy_err))
+    end
+  end
 else
   -- Try system-installed lazy.nvim (NixOS)
-  lazy_available = pcall(require, "lazy")
+  lazy_ok, lazy_err = pcall(require, "lazy")
 
-  if not lazy_available then
+  if not lazy_ok then
     if is_nixos then
       vim.notify(
-        "NixOS detected - Consider installing lazy.nvim through system config",
-        vim.log.levels.WARN,
+        "lazy.nvim not found. Install with:\ngit clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable " .. lazypath,
+        vim.log.levels.ERROR,
         { title = "Lazy.nvim" }
       )
+      if _G.log then
+        _G.log.error("lazy.nvim not found at: " .. lazypath)
+      end
       return -- Exit early on NixOS if lazy.nvim not available
     else
       vim.notify("Installing lazy.nvim...", vim.log.levels.INFO, { title = "Lazy.nvim" })
@@ -37,15 +48,24 @@ else
         lazypath,
       })
       vim.opt.rtp:prepend(lazypath)
-      lazy_available = pcall(require, "lazy")
+      lazy_ok, lazy_err = pcall(require, "lazy")
     end
   end
 end
 
 -- Exit early if lazy.nvim is not available
-if not lazy_available then
-  vim.notify("Lazy.nvim not available - running without plugin manager", vim.log.levels.WARN)
+if not lazy_ok then
+  local error_msg = "Lazy.nvim failed to load: " .. tostring(lazy_err)
+  vim.notify(error_msg, vim.log.levels.ERROR, { title = "Plugin Manager" })
+  if _G.log then
+    _G.log.error(error_msg)
+  end
   return
+end
+
+-- If we got here, lazy.nvim loaded successfully
+if _G.log then
+  _G.log.info("✓ Lazy.nvim loaded successfully")
 end
 
 -- Setup lazy.nvim
