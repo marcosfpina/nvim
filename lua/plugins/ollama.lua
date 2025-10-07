@@ -1,31 +1,45 @@
--- ollama.lua
-local api = require('plenary.api')
-local uv = require('uv')
+-- ~/.config/nvim/lua/plugins/ollama.lua
+-- Ollama integration for local LLM inference
 
-local function send_to_ollama(prompt)
-    local url = "http://localhost:11434/api/generate"
-    local payload = {
-        model = "llama3",
-        prompt = prompt,
-        stream = true
-    }
-
-    local req, err = uv.http.request(url, "POST", payload)
-    if not req then
-        print("Error connecting to Ollama: " .. err)
-        return
-    end
-
-    local response = ""
-    req:once("data", function(chunk)
-        response = response .. chunk
-        -- Process streamed response (e.g., append to a buffer)
-    end)
-
-    req:once("end", function()
-        print("Ollander response: " .. response)
-    end)
-end
-
--- Example: Use in a command
-vim.api.nvim_command("command! -nargs=* Ollama lua send_to_ollama(<args>)")
+return {
+  {
+    "nomnivore/ollama.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    cmd = { "Ollama", "OllamaModel", "OllamaServe", "OllamaServeStop" },
+    keys = {
+      {
+        "<leader>oo",
+        ":<c-u>lua require('ollama').prompt()<cr>",
+        desc = "Ollama: Prompt",
+        mode = { "n", "v" },
+      },
+      {
+        "<leader>oG",
+        ":<c-u>lua require('ollama').prompt('Generate_Code')<cr>",
+        desc = "Ollama: Generate Code",
+        mode = { "n", "v" },
+      },
+    },
+    opts = {
+      model = "qwen3:8b",
+      url = "http://127.0.0.1:11434",
+      serve = {
+        on_start = false,
+        command = "ollama",
+        args = { "serve" },
+        stop_command = "pkill",
+        stop_args = { "-SIGTERM", "ollama" },
+      },
+      prompts = {
+        Sample_Prompt = {
+          prompt = "This is a sample prompt that receives $input and $sel(ection), among others.",
+          input_label = "> ",
+          model = "qwen3:8b",
+          action = "display",
+        },
+      },
+    },
+  },
+}

@@ -185,9 +185,10 @@ return {
     end,
   },
 
-  -- GitHub Copilot
+  -- GitHub Copilot (DISABLED - using Ollama instead)
   {
     "zbirenbaum/copilot.lua",
+    enabled = false,
     cmd = "Copilot",
     event = "InsertEnter",
     opts = {
@@ -235,9 +236,10 @@ return {
     },
   },
 
-  -- Copilot chat
+  -- Copilot chat (DISABLED - using Ollama instead)
   {
     "CopilotC-Nvim/CopilotChat.nvim",
+    enabled = false,
     branch = "canary",
     dependencies = {
       { "zbirenbaum/copilot.lua" },
