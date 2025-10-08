@@ -293,14 +293,18 @@ mapd("n", "<leader>wm", "<cmd>MaximizerToggle<CR>", "Maximize window")
 -- Lua Quick Formatter (like nix fmt)
 ---------------------------------------
 
-local lua_fmt = require("lua-fmt")
+local lua_fmt_ok, lua_fmt = pcall(require, "lua-fmt")
 
-mapd("n", "<leader>fl", lua_fmt.format_current_line, "Format current line (Lua)")
-mapd("v", "<leader>fl", lua_fmt.format_selection, "Format selection (Lua)")
-mapd("n", "<leader>fL", lua_fmt.format_buffer, "Format buffer (Lua)")
-mapd("n", "<leader>fp", lua_fmt.format_plugin_config, "Format plugin config")
-mapd("n", "<leader>fq", lua_fmt.quick_patterns, "Quick format patterns")
-mapd("n", "<leader>fi", lua_fmt.smart_indent_table, "Smart table indent")
+if lua_fmt_ok then
+  mapd("n", "<leader>fl", lua_fmt.format_current_line, "Format current line (Lua)")
+  mapd("v", "<leader>fl", lua_fmt.format_selection, "Format selection (Lua)")
+  mapd("n", "<leader>fL", lua_fmt.format_buffer, "Format buffer (Lua)")
+  mapd("n", "<leader>fp", lua_fmt.format_plugin_config, "Format plugin config")
+  mapd("n", "<leader>fq", lua_fmt.quick_patterns, "Quick format patterns")
+  mapd("n", "<leader>fi", lua_fmt.smart_indent_table, "Smart table indent")
+else
+  vim.notify("lua-fmt module not available, formatter keybindings disabled", vim.log.levels.WARN)
+end
 
 -- Register leader based mappings for which-key discovery later
 
@@ -318,7 +322,15 @@ callback = function()
 
 -- Map namespace groups for WhichKey to discover
 
-local builtin_wk = require("which-key")
+local ok, builtin_wk = pcall(require, "which-key")
+
+if not ok then
+
+vim.notify("which-key not available, skipping leader mappings", vim.log.levels.WARN)
+
+return
+
+end
 
 -- Define base leader mappings
 
@@ -366,4 +378,3 @@ u = { name = "UI" },
 end,
 
 })
-

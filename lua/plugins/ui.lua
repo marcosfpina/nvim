@@ -66,7 +66,7 @@ on_highlights = function(highlights, colors)
 
 highlights.LineNr = {
 
-fg = colors.blue:lighten(20),
+fg = colors.blue,
 
 }
 
@@ -78,11 +78,11 @@ fg = colors.purple,
 
 }
 
--- Improved diagnostic highlights
+-- Improved diagnostic highlights (using colors directly without lighten)
 
 highlights.DiagnosticVirtualTextError = {
 
-bg = colors.error:lighten(95),
+bg = colors.bg_dark,
 
 fg = colors.error,
 
@@ -90,7 +90,7 @@ fg = colors.error,
 
 highlights.DiagnosticVirtualTextWarn = {
 
-bg = colors.warning:lighten(95),
+bg = colors.bg_dark,
 
 fg = colors.warning,
 
@@ -98,7 +98,7 @@ fg = colors.warning,
 
 highlights.DiagnosticVirtualTextInfo = {
 
-bg = colors.info:lighten(95),
+bg = colors.bg_dark,
 
 fg = colors.info,
 
@@ -106,7 +106,7 @@ fg = colors.info,
 
 highlights.DiagnosticVirtualTextHint = {
 
-bg = colors.hint:lighten(95),
+bg = colors.bg_dark,
 
 fg = colors.hint,
 

@@ -71,3 +71,10 @@ logger.error("core.debug.get_logger not found. Using fallback for nvim-lspconfig
 end
 
 logger.info("Configuring nvim-lspconfig and its ecosystem...")
+
+-- TODO: Add LSP server configurations here
+-- Example: require("lspconfig").lua_ls.setup({})
+
+end,
+},
+}

@@ -3,8 +3,17 @@
 -- Core Neovim settings and options
 
 -- Python provider setup
-
-vim.g.python3_host_prog = vim.fn.expand("~/.venvs/nvim/bin/python")
+-- Only set if the venv exists
+local python_venv = vim.fn.expand("~/.venvs/nvim/bin/python")
+if vim.fn.filereadable(python_venv) == 1 then
+  vim.g.python3_host_prog = python_venv
+else
+  -- Try to find python3 in PATH
+  local python3_path = vim.fn.exepath("python3")
+  if python3_path ~= "" then
+    vim.g.python3_host_prog = python3_path
+  end
+end
 
 -- Disable unused providers
 
