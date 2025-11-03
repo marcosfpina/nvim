@@ -844,12 +844,9 @@ return {
         },
         open = {
           timing = animate.gen_timing.exponential({ ease = "in-out", duration = 120, unit = "total" }),
-          winconfig = animate.gen_winconfig.centered({ width = 0.8, height = 0.8 }),
-          subscroll = animate.gen_subscroll.window(),
         },
         close = {
           timing = animate.gen_timing.exponential({ ease = "in-out", duration = 80, unit = "total" }),
-          winconfig = animate.gen_winconfig.centered({ width = 0.8, height = 0.8 }),
         },
       }
     end,
