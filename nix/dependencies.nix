@@ -26,7 +26,7 @@
   # Language servers (can be extended)
   lsp = with pkgs; [
     lua-language-server
-    nil                    # Nix LSP
+    nil # Nix LSP
     nodePackages.typescript-language-server
     nodePackages.vscode-langservers-extracted
     pyright

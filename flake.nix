@@ -6,8 +6,15 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs {
           inherit system;
@@ -17,19 +24,19 @@
         # System dependencies required for full functionality
         systemDependencies = with pkgs; [
           # Core tools
-          ripgrep         # Live grep in Telescope
-          fd              # Fast file finding
-          git             # Version control
-          
+          ripgrep # Live grep in Telescope
+          fd # Fast file finding
+          git # Version control
+
           # Build tools for native extensions
           gcc
           gnumake
           cmake
-          
+
           # Optional but recommended
-          nodejs          # For many LSP servers
-          tree-sitter     # Syntax parsing
-          sqlite          # Frecency database
+          nodejs # For many LSP servers
+          tree-sitter # Syntax parsing
+          sqlite # Frecency database
         ];
 
         # Neovim with custom configuration
@@ -40,7 +47,7 @@
               -- Set up paths
               vim.g.mapleader = " "
               vim.g.maplocalleader = "\\"
-              
+
               -- Source main config
               dofile("${self}/init.lua")
               EOF
@@ -58,14 +65,14 @@
       {
         # Default package
         packages.default = neovimWrapped;
-        
+
         # Explicit package
         packages.neovim = neovimWrapped;
 
         # Development shell with all tools
         devShells.default = pkgs.mkShell {
           buildInputs = [ neovimWrapped ] ++ systemDependencies;
-          
+
           shellHook = ''
             echo "🚀 Neovim Development Environment"
             echo "   Run 'nvim' to start"
