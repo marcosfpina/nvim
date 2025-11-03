@@ -422,6 +422,16 @@ end
 
 -- Defer non-critical initialization to improve perceived startup time
 vim.defer_fn(function()
-  -- Any deferred initialization can go here
+  -- Load which-key hints after startup
+  if pcall(require, "which-key") then
+    require("which-key").setup()
+  end
+  
   _G.log.debug("Deferred initialization complete")
 end, 100)
+
+-- Disable unnecessary providers to speed up startup
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_node_provider = 0

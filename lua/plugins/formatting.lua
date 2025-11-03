@@ -134,7 +134,14 @@ return {
       vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
         group = lint_augroup,
         callback = function()
-          lint.try_lint()
+          -- Safely attempt linting, catching errors for missing linters
+          local ok, err = pcall(lint.try_lint)
+          if not ok and err then
+            -- Silently ignore linter not found errors
+            if not string.match(err, "ENOENT") then
+              vim.notify("Linting error: " .. tostring(err), vim.log.levels.WARN)
+            end
+          end
         end,
       })
 

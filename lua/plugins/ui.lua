@@ -824,13 +824,10 @@ return {
       return {
         resize = {
           timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
-          subroutines = {
-            resize_window = animate.gen_subresize.window({ force_final = true }),
-          },
         },
         scroll = {
           timing = animate.gen_timing.linear({ duration = 120, unit = "total" }),
-          subscroll = animate.gen_subscroll.window({
+          subscroll = animate.gen_subscroll.equal({
             predicate = function()
               if mouse_scrolled then
                 mouse_scrolled = false
@@ -841,14 +838,14 @@ return {
           }),
         },
         cursor = {
-          timing = animate.gen_timing.exponential({ ease = "in-out", duration = 120, unit = "total" }),
-          path = animate.gen_path.angle(),
+          timing = animate.gen_timing.exponential({ easing = "out", duration = 80, unit = "total" }),
+          path = animate.gen_path.line(),
         },
         open = {
-          timing = animate.gen_timing.exponential({ ease = "in-out", duration = 120, unit = "total" }),
+          enable = false,
         },
         close = {
-          timing = animate.gen_timing.exponential({ ease = "in-out", duration = 80, unit = "total" }),
+          enable = false,
         },
       }
     end,
