@@ -26,21 +26,13 @@ return {
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
-      -- Setup logger
-      local logger
-      local core_debug_ok, core_debug = pcall(require, "core.debug.logger")
-      
-      if core_debug_ok and core_debug and core_debug.get_logger then
-        logger = core_debug.get_logger("plugins.lsp.config")
-      else
-        logger = {
-          info = function(m) print("INFO [LSP_P_FB]: " .. m) end,
-          error = function(m) print("ERROR [LSP_P_FB]: " .. m) end,
-          warn = function(m) print("WARN [LSP_P_FB]: " .. m) end,
-          debug = function(m) print("DEBUG [LSP_P_FB]: " .. m) end,
-        }
-        logger.error("core.debug.get_logger not found. Using fallback for nvim-lspconfig.")
-      end
+      -- Use global logger if available
+      local logger = _G.log or {
+        info = function(m) vim.notify("[INFO] " .. m, vim.log.levels.INFO) end,
+        error = function(m) vim.notify("[ERROR] " .. m, vim.log.levels.ERROR) end,
+        warn = function(m) vim.notify("[WARN] " .. m, vim.log.levels.WARN) end,
+        debug = function(m) vim.notify("[DEBUG] " .. m, vim.log.levels.DEBUG) end,
+      }
       
       logger.info("Configuring nvim-lspconfig and its ecosystem...")
       

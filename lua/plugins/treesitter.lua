@@ -47,7 +47,7 @@ return {
         -- Scripting
         "bash",
         "fish",
-        "zsh",
+        -- Note: zsh parser removed - install manually if needed
         
         -- Config files
         "yaml",
