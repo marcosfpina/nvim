@@ -79,3 +79,4 @@
   for preparar um overlay em lote, basta iterar sobre a seção “needs overlay” para gerar os fetchFromGitHub.
 
 https://github.com/NixOS/nixpkgs/blob/nixos-unstable/pkgs/applications/editors/vim/plugins/generated.nix#L10495
+https://github.com/nvim-neotest/neotest-python
