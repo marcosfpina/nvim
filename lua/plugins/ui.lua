@@ -156,7 +156,7 @@ return {
           lualine_x = {
             {
               function()
-                local buf_clients = vim.lsp.get_active_clients({ bufnr = 0 })
+                local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
                 if #buf_clients == 0 then
                   return "LSP Inactive"
                 end
@@ -379,7 +379,7 @@ return {
         "⠀⠀⠀⠀⠀⠀⠀⠀⠈⠛⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀",
         "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⠙⠛⠛⠿⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⠿⠿⠿⠛⠛⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀",
         " ",
-        " N E O V I M - E N H A N C E D F O R 2 0 2 5 ",
+        "                           Void V I M ",
         " ",
       }
 

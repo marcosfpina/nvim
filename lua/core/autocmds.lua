@@ -134,7 +134,7 @@ autocmd(lsp_behavior, "BufWritePre", {
     return
   end
   
-  local clients = vim.lsp.buf_get_clients(bufnr)
+  local clients = vim.lsp.get_clients({ bufnr = bufnr })
   local can_format = false
   
   for _, client in pairs(clients) do

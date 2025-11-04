@@ -18,7 +18,7 @@ end
 
 -- Check if an LSP server is active
 M.lsp_get_active_client_by_name = function(bufnr, name)
-  for _, client in pairs(vim.lsp.get_active_clients({ bufnr = bufnr })) do
+  for _, client in pairs(vim.lsp.get_clients({ bufnr = bufnr })) do
     if client.name == name then
       return client
     end

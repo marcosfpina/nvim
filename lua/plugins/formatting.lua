@@ -131,15 +131,16 @@ return {
       -- Create autocommand which carries out the actual linting
       local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
-      vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+      vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
         group = lint_augroup,
         callback = function()
           -- Safely attempt linting, catching errors for missing linters
           local ok, err = pcall(lint.try_lint)
           if not ok and err then
-            -- Silently ignore linter not found errors
-            if not string.match(err, "ENOENT") then
-              vim.notify("Linting error: " .. tostring(err), vim.log.levels.WARN)
+            -- Silently ignore linter not found errors (ENOENT means binary not found)
+            local err_str = tostring(err)
+            if not (string.match(err_str, "ENOENT") or string.match(err_str, "no such file")) then
+              vim.notify("Linting error: " .. err_str, vim.log.levels.WARN)
             end
           end
         end,
