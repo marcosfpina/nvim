@@ -69,7 +69,7 @@ local log_levels = {
   FATAL = 5,
 }
 
-local log_level = _G.nvim_config.environment.is_dev_mode and log_levels.DEBUG or log_levels.INFO
+local log_level = _G.nvim_config.environment.is_dev_mode and log_levels.DEBUG or log_levels.WARN
 
 _G.log = {
   trace = function(msg, data)
@@ -426,12 +426,12 @@ vim.defer_fn(function()
   if pcall(require, "which-key") then
     require("which-key").setup()
   end
-  
+
   _G.log.debug("Deferred initialization complete")
 end, 100)
 
 -- Disable unnecessary providers to speed up startup
-vim.g.loaded_python3_provider = 0
+vim.g.loaded_python3_provider = 1
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_node_provider = 0
