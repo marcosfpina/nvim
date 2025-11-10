@@ -143,179 +143,187 @@ return {
         capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
       end
 
-      -- Setup mason-lspconfig
-      local mason_lspconfig = require("mason-lspconfig")
-      mason_lspconfig.setup({
-        ensure_installed = {
-          "lua_ls",
-          "bashls",
-          "jsonls",
-          "yamlls",
-          -- Adicione conforme necessário:
-          -- "pyright",      -- Python
-          -- "ts_ls",        -- TypeScript/JavaScript
-          -- "rust_analyzer",-- Rust
-          -- "gopls",        -- Go
-          -- "clangd",       -- C/C++
+      -- Setup mason-lspconfig (with error handling)
+      local mason_lspconfig_ok, mason_lspconfig = pcall(require, "mason-lspconfig")
+      if mason_lspconfig_ok then
+        local setup_ok, _ = pcall(function()
+          mason_lspconfig.setup({
+            ensure_installed = {
+              "lua_ls",
+              "bashls",
+              "jsonls",
+              "yamlls",
+              -- Adicione conforme necessário:
+              -- "pyright",      -- Python
+              -- "ts_ls",        -- TypeScript/JavaScript
+              -- "rust_analyzer",-- Rust
+              -- "gopls",        -- Go
+              -- "clangd",       -- C/C++
+            },
+            automatic_installation = true,
+          })
+        end)
+
+        if not setup_ok then
+          logger.warn("mason-lspconfig setup failed, falling back to manual setup")
+        end
+      else
+        logger.warn("mason-lspconfig not available, using manual LSP setup")
+      end
+
+      -- LSP Server setup function using new vim.lsp.config API
+      local function setup_server(server_name, server_config)
+        local default_config = {
+          on_attach = on_attach,
+          capabilities = capabilities,
+        }
+
+        local config = server_config and vim.tbl_deep_extend("force", default_config, server_config) or default_config
+
+        local setup_ok, _ = pcall(function()
+          -- Define the LSP config using the new API
+          vim.lsp.config(server_name, config)
+          -- Enable the server
+          vim.lsp.enable(server_name)
+        end)
+
+        if setup_ok then
+          logger.info("LSP server configured: " .. server_name)
+        else
+          logger.warn("Failed to setup LSP server: " .. server_name)
+        end
+      end
+
+      -- Setup LSP servers directly (more reliable than setup_handlers)
+
+      -- Lua
+      setup_server("lua_ls", {
+        cmd = { "lua-language-server" },
+        filetypes = { "lua" },
+        root_markers = { ".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml", "stylua.toml", "selene.toml", "selene.yml", ".git" },
+        settings = {
+          Lua = {
+            runtime = { version = "LuaJIT" },
+            diagnostics = {
+              globals = { "vim" },
+            },
+            workspace = {
+              checkThirdParty = false,
+              library = {
+                vim.env.VIMRUNTIME,
+              },
+            },
+            telemetry = { enable = false },
+            completion = {
+              callSnippet = "Replace",
+            },
+          },
         },
-        automatic_installation = true,
       })
 
-      -- LSP Server configurations
-      local lspconfig = require("lspconfig")
-
-      -- Default setup for most servers
-      mason_lspconfig.setup_handlers({
-        -- Default handler
-        function(server_name)
-          lspconfig[server_name].setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-          })
-        end,
-
-        -- Lua
-        ["lua_ls"] = function()
-          lspconfig.lua_ls.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-              Lua = {
-                runtime = { version = "LuaJIT" },
-                diagnostics = {
-                  globals = { "vim" },
-                },
-                workspace = {
-                  checkThirdParty = false,
-                  library = {
-                    vim.env.VIMRUNTIME,
-                  },
-                },
-                telemetry = { enable = false },
-                completion = {
-                  callSnippet = "Replace",
-                },
-              },
-            },
-          })
-        end,
-
-        -- Python
-        ["pyright"] = function()
-          lspconfig.pyright.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-              python = {
-                analysis = {
-                  autoSearchPaths = true,
-                  diagnosticMode = "workspace",
-                  useLibraryCodeForTypes = true,
-                  typeCheckingMode = "basic",
-                },
-              },
-            },
-          })
-        end,
-
-        -- TypeScript/JavaScript
-        ["ts_ls"] = function()
-          lspconfig.ts_ls.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-              typescript = {
-                inlayHints = {
-                  includeInlayParameterNameHints = "all",
-                  includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                  includeInlayFunctionParameterTypeHints = true,
-                  includeInlayVariableTypeHints = true,
-                  includeInlayPropertyDeclarationTypeHints = true,
-                  includeInlayFunctionLikeReturnTypeHints = true,
-                  includeInlayEnumMemberValueHints = true,
-                },
-              },
-              javascript = {
-                inlayHints = {
-                  includeInlayParameterNameHints = "all",
-                  includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                  includeInlayFunctionParameterTypeHints = true,
-                  includeInlayVariableTypeHints = true,
-                  includeInlayPropertyDeclarationTypeHints = true,
-                  includeInlayFunctionLikeReturnTypeHints = true,
-                  includeInlayEnumMemberValueHints = true,
-                },
-              },
-            },
-          })
-        end,
-
-        -- JSON
-        ["jsonls"] = function()
-          lspconfig.jsonls.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-              json = {
-                schemas = require("schemastore").json.schemas(),
-                validate = { enable = true },
-              },
-            },
-          })
-        end,
-
-        -- YAML
-        ["yamlls"] = function()
-          lspconfig.yamlls.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-              yaml = {
-                schemaStore = {
-                  enable = false,
-                  url = "",
-                },
-                schemas = require("schemastore").yaml.schemas(),
-              },
-            },
-          })
-        end,
-
-        -- Rust
-        ["rust_analyzer"] = function()
-          lspconfig.rust_analyzer.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-              ["rust-analyzer"] = {
-                checkOnSave = {
-                  command = "clippy",
-                },
-                cargo = {
-                  allFeatures = true,
-                },
-              },
-            },
-          })
-        end,
-
-        -- Go
-        ["gopls"] = function()
-          lspconfig.gopls.setup({
-            on_attach = on_attach,
-            capabilities = capabilities,
-            settings = {
-              gopls = {
-                analyses = {
-                  unusedparams = true,
-                },
-                staticcheck = true,
-                gofumpt = true,
-              },
-            },
-          })
-        end,
+      -- Bash
+      setup_server("bashls", {
+        cmd = { "bash-language-server", "start" },
+        filetypes = { "sh", "bash" },
       })
+
+      -- JSON
+      setup_server("jsonls", {
+        cmd = { "vscode-json-language-server", "--stdio" },
+        filetypes = { "json", "jsonc" },
+        settings = {
+          json = {
+            schemas = require("schemastore").json.schemas(),
+            validate = { enable = true },
+          },
+        },
+      })
+
+      -- YAML
+      setup_server("yamlls", {
+        cmd = { "yaml-language-server", "--stdio" },
+        filetypes = { "yaml", "yaml.docker-compose" },
+        settings = {
+          yaml = {
+            schemaStore = {
+              enable = false,
+              url = "",
+            },
+            schemas = require("schemastore").yaml.schemas(),
+          },
+        },
+      })
+
+      -- Optional servers (uncomment if needed)
+
+      -- Python
+      -- setup_server("pyright", {
+      --   settings = {
+      --     python = {
+      --       analysis = {
+      --         autoSearchPaths = true,
+      --         diagnosticMode = "workspace",
+      --         useLibraryCodeForTypes = true,
+      --         typeCheckingMode = "basic",
+      --       },
+      --     },
+      --   },
+      -- })
+
+      -- TypeScript/JavaScript
+      -- setup_server("ts_ls", {
+      --   settings = {
+      --     typescript = {
+      --       inlayHints = {
+      --         includeInlayParameterNameHints = "all",
+      --         includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+      --         includeInlayFunctionParameterTypeHints = true,
+      --         includeInlayVariableTypeHints = true,
+      --         includeInlayPropertyDeclarationTypeHints = true,
+      --         includeInlayFunctionLikeReturnTypeHints = true,
+      --         includeInlayEnumMemberValueHints = true,
+      --       },
+      --     },
+      --     javascript = {
+      --       inlayHints = {
+      --         includeInlayParameterNameHints = "all",
+      --         includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+      --         includeInlayFunctionParameterTypeHints = true,
+      --         includeInlayVariableTypeHints = true,
+      --         includeInlayPropertyDeclarationTypeHints = true,
+      --         includeInlayFunctionLikeReturnTypeHints = true,
+      --         includeInlayEnumMemberValueHints = true,
+      --       },
+      --     },
+      --   },
+      -- })
+
+      -- Rust
+      -- setup_server("rust_analyzer", {
+      --   settings = {
+      --     ["rust-analyzer"] = {
+      --       checkOnSave = {
+      --         command = "clippy",
+      --       },
+      --       cargo = {
+      --         allFeatures = true,
+      --       },
+      --     },
+      --   },
+      -- })
+
+      -- Go
+      -- setup_server("gopls", {
+      --   settings = {
+      --     gopls = {
+      --       analyses = {
+      --         unusedparams = true,
+      --       },
+      --       staticcheck = true,
+      --       gofumpt = true,
+      --     },
+      --   },
+      -- })
 
       logger.info("LSP configuration complete!")
     end,

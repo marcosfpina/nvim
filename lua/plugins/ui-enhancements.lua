@@ -10,8 +10,22 @@ return {
     event = "VeryLazy",
     dependencies = {
       "MunifTanjim/nui.nvim",
-      "rcarriga/nvim-notify",
+      {
+        "rcarriga/nvim-notify",
+        opts = {
+          timeout = 1500, -- Fast timeout: 1.5 seconds
+          max_width = 60,
+          max_height = 10,
+          render = "compact",
+          stages = "fade",
+          top_down = true,
+        },
+      },
     },
+    init = function()
+      -- Ensure lazyredraw is disabled for Noice compatibility
+      vim.opt.lazyredraw = false
+    end,
     opts = {
       lsp = {
         override = {
@@ -77,6 +91,14 @@ return {
         {
           view = "notify",
           filter = { event = "msg_showmode" },
+        },
+        -- Suppress better-escape.nvim notifications
+        {
+          filter = {
+            event = "notify",
+            find = "better%-escape",
+          },
+          opts = { skip = true },
         },
       },
     },

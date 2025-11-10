@@ -114,7 +114,7 @@ opt.updatetime = 100              -- Faster CursorHold events, better UX
 opt.timeoutlen = 300              -- Time to wait for mapped sequences
 opt.ttimeoutlen = 10              -- Time to wait for key codes
 opt.redrawtime = 1500             -- Maximum time spent redrawing
-opt.lazyredraw = true             -- Don't redraw during macros
+opt.lazyredraw = false            -- Disabled for noice.nvim compatibility
 
 -- ╭─────────────────────────────────────────────────────────╮
 -- │                   Completion                             │

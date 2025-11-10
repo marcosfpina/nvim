@@ -24,8 +24,8 @@ return {
       "nvim-telescope/telescope-ui-select.nvim",
       -- Live grep args for advanced searching
       "nvim-telescope/telescope-live-grep-args.nvim",
-      -- Project management
-      "nvim-telescope/telescope-project.nvim",
+      -- Project management - DISABLED
+      -- "nvim-telescope/telescope-project.nvim",
       -- Frecency for smart file sorting
       {
         "nvim-telescope/telescope-frecency.nvim",
@@ -79,9 +79,9 @@ return {
       { "<leader>fC", "<cmd>Telescope commands<cr>", desc = "Commands" },
       { "<leader>f:", "<cmd>Telescope command_history<cr>", desc = "Command History" },
       { "<leader>f/", "<cmd>Telescope search_history<cr>", desc = "Search History" },
-      
+
       -- Extensions
-      { "<leader>fp", "<cmd>Telescope project<cr>", desc = "Projects" },
+      -- { "<leader>fp", "<cmd>Telescope project<cr>", desc = "Projects" }, -- Disabled
       { "<leader>fF", "<cmd>Telescope frecency<cr>", desc = "Frecency Files" },
       { "<leader>fu", "<cmd>Telescope undo<cr>", desc = "Undo Tree" },
       { "<leader>fe", "<cmd>Telescope symbols<cr>", desc = "Emoji & Symbols" },
@@ -287,17 +287,17 @@ return {
               },
             }),
           },
-          project = {
-            base_dirs = {
-              "~/projects",
-              "~/.config",
-            },
-            hidden_files = true,
-            theme = "dropdown",
-            order_by = "asc",
-            search_by = "title",
-            sync_with_nvim_tree = true,
-          },
+          -- project = {
+          --   base_dirs = {
+          --     "~/projects",
+          --     "~/.config",
+          --   },
+          --   hidden_files = true,
+          --   theme = "dropdown",
+          --   order_by = "asc",
+          --   search_by = "title",
+          --   sync_with_nvim_tree = true,
+          -- },
           frecency = {
             show_scores = false,
             show_unindexed = true,
@@ -343,7 +343,7 @@ return {
       pcall(telescope.load_extension, "fzf")
       pcall(telescope.load_extension, "file_browser")
       pcall(telescope.load_extension, "ui-select")
-      pcall(telescope.load_extension, "project")
+      -- pcall(telescope.load_extension, "project") -- Disabled
       pcall(telescope.load_extension, "frecency")
       pcall(telescope.load_extension, "undo")
       pcall(telescope.load_extension, "live_grep_args")
