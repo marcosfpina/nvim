@@ -80,6 +80,12 @@ require("lazy").setup({
     version = false, -- Don't use version by default, use latest
   },
 
+  -- Disable luarocks support (not needed for most setups)
+  rocks = {
+    enabled = false,
+    hererocks = false,
+  },
+
   install = {
     -- Install missing plugins on startup
     missing = true,

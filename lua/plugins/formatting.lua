@@ -20,35 +20,29 @@ return {
     opts = {
       formatters_by_ft = {
         lua = { "stylua" },
-        python = { "isort", "black" },
-        javascript = { { "prettierd", "prettier" } },
-        javascriptreact = { { "prettierd", "prettier" } },
-        typescript = { { "prettierd", "prettier" } },
-        typescriptreact = { { "prettierd", "prettier" } },
-        vue = { { "prettierd", "prettier" } },
-        css = { { "prettierd", "prettier" } },
-        scss = { { "prettierd", "prettier" } },
-        less = { { "prettierd", "prettier" } },
-        html = { { "prettierd", "prettier" } },
-        json = { { "prettierd", "prettier" } },
-        jsonc = { { "prettierd", "prettier" } },
-        yaml = { { "prettierd", "prettier" } },
-        markdown = { { "prettierd", "prettier" } },
-        ["markdown.mdx"] = { { "prettierd", "prettier" } },
-        graphql = { { "prettierd", "prettier" } },
-        handlebars = { { "prettierd", "prettier" } },
-        go = { "goimports", "gofmt" },
-        rust = { "rustfmt" },
+        javascript = { "prettier" },
+        javascriptreact = { "prettier" },
+        typescript = { "prettier" },
+        typescriptreact = { "prettier" },
+        vue = { "prettier" },
+        css = { "prettier" },
+        scss = { "prettier" },
+        less = { "prettier" },
+        html = { "prettier" },
+        json = { "prettier" },
+        jsonc = { "prettier" },
+        yaml = { "prettier" },
+        markdown = { "prettier" },
+        ["markdown.mdx"] = { "prettier" },
+        graphql = { "prettier" },
         sh = { "shfmt" },
         bash = { "shfmt" },
-        fish = { "fish_indent" },
-        toml = { "taplo" },
-        c = { "clang_format" },
-        cpp = { "clang_format" },
-        java = { "google-java-format" },
-        terraform = { "terraform_fmt" },
-        tf = { "terraform_fmt" },
-        ["terraform-vars"] = { "terraform_fmt" },
+        -- Adicione conforme instalar as ferramentas:
+        -- python = { "isort", "black" },
+        -- go = { "goimports" },
+        -- rust = { "rustfmt" },  -- vem com Rust toolchain
+        -- c = { "clang_format" },
+        -- cpp = { "clang_format" },
       },
       format_on_save = function(bufnr)
         -- Disable with a global or buffer-local variable
@@ -58,6 +52,7 @@ return {
         return {
           timeout_ms = 500,
           lsp_fallback = true,
+          stop_after_first = true,
         }
       end,
       formatters = {
@@ -81,7 +76,7 @@ return {
     },
     init = function()
       vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
-      
+
       -- Commands to toggle format on save
       vim.api.nvim_create_user_command("FormatDisable", function(args)
         if args.bang then
@@ -94,7 +89,7 @@ return {
         desc = "Disable autoformat-on-save",
         bang = true,
       })
-      
+
       vim.api.nvim_create_user_command("FormatEnable", function()
         vim.b.disable_autoformat = false
         vim.g.disable_autoformat = false
@@ -112,20 +107,16 @@ return {
       local lint = require("lint")
 
       lint.linters_by_ft = {
-        javascript = { "eslint_d" },
-        javascriptreact = { "eslint_d" },
-        typescript = { "eslint_d" },
-        typescriptreact = { "eslint_d" },
-        python = { "pylint" },
-        go = { "golangcilint" },
-        rust = { "cargo" },
         lua = { "luacheck" },
-        dockerfile = { "hadolint" },
-        yaml = { "yamllint" },
-        json = { "jsonlint" },
         markdown = { "markdownlint" },
         sh = { "shellcheck" },
         bash = { "shellcheck" },
+        -- Adicione conforme instalar as ferramentas:
+        -- javascript = { "eslint_d" },
+        -- javascriptreact = { "eslint_d" },
+        -- typescript = { "eslint_d" },
+        -- typescriptreact = { "eslint_d" },
+        -- python = { "pylint" },
       }
 
       -- Create autocommand which carries out the actual linting
@@ -170,52 +161,28 @@ return {
     cmd = { "MasonToolsInstall", "MasonToolsUpdate" },
     opts = {
       ensure_installed = {
-        -- Formatters
+        -- Formatters (essenciais)
         "stylua",
-        "black",
-        "isort",
         "prettier",
-        "prettierd",
         "shfmt",
-        "gofmt",
-        "goimports",
-        "rustfmt",
-        "clang-format",
-        "google-java-format",
-        "terraform-fmt",
-        "taplo",
 
-        -- Linters
-        "eslint_d",
-        "pylint",
+        -- Linters (essenciais)
         "shellcheck",
         "markdownlint",
-        "yamllint",
-        "hadolint",
         "luacheck",
 
-        -- Language servers (will configure in lsp.lua)
+        -- Language servers (essenciais - outros já estão em lsp.lua)
         "lua-language-server",
-        "pyright",
-        "typescript-language-server",
-        "tailwindcss-language-server",
-        "html-lsp",
-        "css-lsp",
+        "bash-language-server",
         "json-lsp",
         "yaml-language-server",
-        "gopls",
-        "rust-analyzer",
-        "clangd",
-        "bashls",
-        "dockerls",
-        "docker-compose-language-service",
-        "terraform-ls",
 
-        -- DAP
-        "debugpy",
-        "js-debug-adapter",
-        "codelldb",
-        "delve",
+        -- Adicione conforme necessário:
+        -- Python: "pyright", "black", "isort", "pylint"
+        -- TypeScript/JS: "typescript-language-server", "prettierd", "eslint_d"
+        -- Go: "gopls", "goimports"
+        -- Rust: "rust-analyzer"
+        -- C/C++: "clangd", "clang-format"
       },
       auto_update = false,
       run_on_start = true,

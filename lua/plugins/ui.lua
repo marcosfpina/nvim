@@ -193,6 +193,34 @@ return {
           lualine_z = { "location" },
         },
         tabline = {},
+        winbar = {
+          lualine_c = {
+            {
+              function()
+                local navic = require("nvim-navic")
+                if navic.is_available() then
+                  return navic.get_location()
+                end
+                return ""
+              end,
+              cond = function()
+                local navic = require("nvim-navic")
+                return navic.is_available()
+              end,
+              color = { fg = "#7aa2f7" },
+            },
+          },
+        },
+        inactive_winbar = {
+          lualine_c = {
+            {
+              function()
+                return vim.fn.expand("%:t")
+              end,
+              color = { fg = "#565f89" },
+            },
+          },
+        },
         extensions = {
           "nvim-tree",
           "toggleterm",

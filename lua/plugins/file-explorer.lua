@@ -206,9 +206,9 @@ return {
     end,
   },
 
-  -- Project management
+  -- Project management (using maintained fork with Neovim 0.10+ support)
   {
-    "ahmedkhalf/project.nvim",
+    "coffebar/project.nvim",
     event = "VeryLazy",
     opts = {
       detection_methods = { "lsp", "pattern" },
