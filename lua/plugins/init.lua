@@ -238,6 +238,7 @@ return {
     event = "VeryLazy",
     opts = {
       plugins = { spelling = true },
+      notify = false, -- Disable notifications/warnings
       defaults = {
         mode = { "n", "v" },
         ["g"] = { name = "+goto" },

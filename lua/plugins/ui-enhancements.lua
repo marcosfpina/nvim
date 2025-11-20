@@ -100,6 +100,30 @@ return {
           },
           opts = { skip = true },
         },
+        -- Suppress vim.validate deprecation warnings
+        {
+          filter = {
+            event = "msg_show",
+            kind = "wmsg",
+            find = "vim%.validate is deprecated",
+          },
+          opts = { skip = true },
+        },
+        -- Suppress which-key warnings
+        {
+          filter = {
+            event = "notify",
+            find = "which%-key",
+          },
+          opts = { skip = true },
+        },
+        {
+          filter = {
+            event = "msg_show",
+            find = "which%-key",
+          },
+          opts = { skip = true },
+        },
       },
     },
     keys = {
@@ -128,7 +152,7 @@ return {
       scrollbar.setup({
         handle = {
           color = colors.bg_highlight,
-          blend = 30,
+          blend = 0,
         },
         marks = {
           Cursor = {
