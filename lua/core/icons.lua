@@ -136,4 +136,29 @@ M.todo = {
   test = "⏲",
 }
 
+-- Logging levels (for debug system)
+M.levels = {
+  DEBUG = "🐛",
+  INFO  = "ℹ️ ",
+  WARN  = "⚠️ ",
+  ERROR = "💥",
+  TRACE = "🔍",
+  FATAL = "💀",
+}
+
+-- Additional misc icons
+M.misc.CheckboxChecked   = "✓"
+M.misc.CheckboxUnchecked = "☐"
+M.misc.Arrow             = "→"
+M.misc.Warning           = "⚠️ "
+M.misc.Success           = "✅"
+M.misc.Failure           = "❌"
+M.misc.Loading           = "⏳"
+M.misc.Gear              = "⚙️ "
+M.misc.Bug               = "🐛"
+M.misc.Plug              = "🔌"
+M.misc.Search            = "🔍"
+M.misc.Lock              = "🔒"
+M.misc.Unlock            = "🔓"
+
 return M

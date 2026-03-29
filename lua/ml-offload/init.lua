@@ -6,7 +6,7 @@ local M = {}
 
 -- Default configuration
 M.config = {
-  api_url = "http://127.0.0.1:9000",
+  api_url = "http://127.0.0.1:8080",
   timeout = 30000,
   model = "default",
   chat_defaults = {
@@ -118,11 +118,16 @@ end
 function M.status()
   vim.notify("Checking ML Offload API status...", vim.log.levels.INFO)
   
-  local data, err = make_request("/api/health", "GET")
+  -- Try standard llama.cpp health endpoint first
+  local data, err = make_request("/health", "GET")
   
   if err then
-    vim.notify("ML Offload API Error: " .. err, vim.log.levels.ERROR)
-    return
+    -- Try legacy ML Offload API endpoint as fallback
+    data, err = make_request("/api/health", "GET")
+    if err then
+      vim.notify("ML Offload API Error: " .. err, vim.log.levels.ERROR)
+      return
+    end
   end
   
   -- Create status buffer
@@ -155,9 +160,18 @@ function M.status()
   }
   
   -- Add backend status lines
-  local backend_lines = format_backend_status(data.backends)
-  for _, line in ipairs(backend_lines) do
-    table.insert(lines, line)
+  if data.backends then
+    local backend_lines = format_backend_status(data.backends)
+    for _, line in ipairs(backend_lines) do
+      table.insert(lines, line)
+    end
+  else
+    table.insert(lines, "  Direct connection (llama.cpp)")
+    if data.status == "ok" then
+      table.insert(lines, "  Status: ready ✓")
+    else
+      table.insert(lines, "  Status: " .. (data.status or "unknown"))
+    end
   end
   
   table.insert(lines, "")
