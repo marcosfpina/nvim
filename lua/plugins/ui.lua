@@ -28,14 +28,118 @@ return {
         dim_inactive = false,
         lualine_bold = true,
         on_colors = function(colors)
-          colors.hint = colors.orange
-          colors.error = "#ff6666"
+          colors.bg = "#101418"
+          colors.bg_dark = "#0b0f13"
+          colors.bg_float = "#151b21"
+          colors.bg_highlight = "#1c242c"
+          colors.bg_sidebar = "#0d1217"
+          colors.terminal_black = "#6e7681"
+          colors.fg = "#e6edf3"
+          colors.fg_dark = "#9ba7b4"
+          colors.fg_gutter = "#4b5563"
+          colors.comment = "#7d8590"
+          colors.dark3 = "#27313a"
+          colors.dark5 = "#5b6672"
+          colors.blue = "#7cc7ff"
+          colors.cyan = "#76e3ea"
+          colors.green = "#7ee787"
+          colors.magenta = "#d2a8ff"
+          colors.orange = "#ffb86b"
+          colors.yellow = "#f2cc60"
+          colors.red = "#ff7b72"
+          colors.teal = "#4fd1a5"
+          colors.git = {
+            add = "#7ee787",
+            change = "#7cc7ff",
+            delete = "#ff7b72",
+          }
+          colors.hint = colors.teal
+          colors.error = colors.red
+          colors.warning = colors.orange
+          colors.info = colors.blue
         end,
         on_highlights = function(highlights, colors)
           highlights.LineNr = { fg = colors.dark5 }
-          highlights.CursorLineNr = { fg = colors.blue, bold = true }
+          highlights.CursorLineNr = { fg = colors.green, bold = true }
           highlights.CursorLine = { bg = colors.bg_highlight }
-          highlights.TelescopePromptPrefix = { fg = colors.purple }
+          highlights.Normal = { fg = colors.fg, bg = colors.bg }
+          highlights.NormalFloat = { fg = colors.fg, bg = colors.bg_float }
+          highlights.FloatBorder = { fg = colors.dark3, bg = colors.bg_float }
+          highlights.BorderBG = { fg = colors.dark3, bg = colors.bg_float }
+          highlights.WinSeparator = { fg = colors.dark3 }
+          highlights.SignColumn = { bg = colors.bg }
+          highlights.Pmenu = { fg = colors.fg, bg = colors.bg_float }
+          highlights.PmenuSel = { fg = colors.fg, bg = colors.bg_highlight, bold = true }
+          highlights.PmenuSbar = { bg = colors.dark3 }
+          highlights.PmenuThumb = { bg = colors.dark5 }
+          highlights.TelescopePromptPrefix = { fg = colors.green }
+          highlights.TelescopeNormal = { fg = colors.fg, bg = colors.bg_float }
+          highlights.TelescopeBorder = { fg = colors.dark3, bg = colors.bg_float }
+          highlights.TelescopePromptNormal = { fg = colors.fg, bg = colors.bg_highlight }
+          highlights.TelescopePromptBorder = { fg = colors.dark3, bg = colors.bg_highlight }
+          highlights.TelescopePromptTitle = { fg = colors.bg_dark, bg = colors.green, bold = true }
+          highlights.TelescopePreviewTitle = { fg = colors.bg_dark, bg = colors.blue, bold = true }
+          highlights.TelescopeResultsTitle = { fg = colors.bg_dark, bg = colors.orange, bold = true }
+          highlights.TelescopeSelection = { fg = colors.fg, bg = colors.bg_highlight, bold = true }
+          highlights.TelescopeSelectionCaret = { fg = colors.green, bg = colors.bg_highlight, bold = true }
+          highlights.TelescopeMatching = { fg = colors.cyan, bold = true }
+          highlights.CmpItemAbbr = { fg = colors.fg }
+          highlights.CmpItemAbbrMatch = { fg = colors.cyan, bold = true }
+          highlights.CmpItemAbbrMatchFuzzy = { fg = colors.blue, bold = true }
+          highlights.CmpItemMenu = { fg = colors.comment, italic = true }
+          highlights.CmpItemKindVariable = { fg = colors.fg }
+          highlights.CmpItemKindFunction = { fg = colors.blue }
+          highlights.CmpItemKindMethod = { fg = colors.blue }
+          highlights.CmpItemKindKeyword = { fg = colors.green }
+          highlights.CmpItemKindClass = { fg = colors.cyan }
+          highlights.CmpItemKindInterface = { fg = colors.cyan }
+          highlights.CmpItemKindModule = { fg = colors.orange }
+          highlights.CmpItemKindProperty = { fg = "#ffa657" }
+          highlights.CmpItemKindField = { fg = "#ffa657" }
+          highlights.CmpItemKindValue = { fg = colors.magenta }
+          highlights.CmpItemKindConstant = { fg = colors.magenta }
+          highlights.CmpItemKindSnippet = { fg = colors.orange }
+          highlights.Visual = { bg = "#22303a" }
+          highlights.Search = { fg = colors.bg_dark, bg = colors.yellow }
+          highlights.IncSearch = { fg = colors.bg_dark, bg = colors.orange }
+          highlights.String = { fg = colors.yellow }
+          highlights.Character = { fg = colors.yellow }
+          highlights.Number = { fg = colors.magenta }
+          highlights.Boolean = { fg = colors.magenta, italic = true }
+          highlights.Float = { fg = colors.magenta }
+          highlights.Function = { fg = colors.blue, bold = true }
+          highlights["@function"] = { fg = colors.blue, bold = true }
+          highlights["@function.builtin"] = { fg = colors.cyan, bold = true }
+          highlights["@method"] = { fg = colors.blue }
+          highlights["@constructor"] = { fg = colors.cyan, bold = true }
+          highlights.Keyword = { fg = colors.green, italic = true }
+          highlights.Conditional = { fg = colors.green, italic = true }
+          highlights.Repeat = { fg = colors.green, italic = true }
+          highlights.Statement = { fg = colors.green }
+          highlights.Operator = { fg = "#c9d1d9" }
+          highlights["@keyword"] = { fg = colors.green, italic = true }
+          highlights["@keyword.function"] = { fg = colors.green, italic = true }
+          highlights["@keyword.return"] = { fg = colors.green, italic = true }
+          highlights.Type = { fg = colors.cyan, bold = true }
+          highlights["@type"] = { fg = colors.cyan, bold = true }
+          highlights["@type.builtin"] = { fg = colors.cyan, italic = true }
+          highlights["@property"] = { fg = "#ffa657" }
+          highlights["@field"] = { fg = "#ffa657" }
+          highlights["@variable"] = { fg = colors.fg }
+          highlights["@variable.builtin"] = { fg = colors.red, italic = true }
+          highlights["@constant"] = { fg = colors.magenta }
+          highlights["@constant.builtin"] = { fg = colors.red, italic = true }
+          highlights["@parameter"] = { fg = "#f0f6fc" }
+          highlights["@markup.heading"] = { fg = colors.blue, bold = true }
+          highlights["@markup.strong"] = { fg = colors.fg, bold = true }
+          highlights["@markup.italic"] = { fg = colors.fg_dark, italic = true }
+          highlights["@markup.quote"] = { fg = colors.comment, italic = true }
+          highlights["@markup.raw"] = { fg = colors.yellow }
+          highlights["@markup.raw.block"] = { fg = colors.yellow, bg = colors.bg_highlight }
+          highlights["@markup.link"] = { fg = colors.cyan, underline = true }
+          highlights["@markup.list"] = { fg = colors.green }
+          highlights["@punctuation.special.markdown"] = { fg = colors.green }
+          highlights.Comment = { fg = colors.comment, italic = true }
           highlights.DiagnosticVirtualTextError = { bg = "NONE", fg = colors.error }
           highlights.DiagnosticVirtualTextWarn = { bg = "NONE", fg = colors.warning }
           highlights.DiagnosticVirtualTextInfo = { bg = "NONE", fg = colors.info }
