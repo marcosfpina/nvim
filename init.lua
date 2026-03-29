@@ -422,11 +422,6 @@ end
 
 -- Defer non-critical initialization to improve perceived startup time
 vim.defer_fn(function()
-  -- Load which-key hints after startup
-  if pcall(require, "which-key") then
-    require("which-key").setup()
-  end
-
   _G.log.debug("Deferred initialization complete")
 end, 100)
 
@@ -435,3 +430,14 @@ vim.g.loaded_python3_provider = 1
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_perl_provider = 0
 vim.g.loaded_node_provider = 0
+
+--------------------------------------------------------------------------------
+-- DEBUG & FORENSIC TOOLS
+--------------------------------------------------------------------------------
+-- Lazy-load debug system (call :DebugEnable to activate full features)
+pcall(function()
+  local debug_cmds = require("core.debug.commands")
+  if debug_cmds and debug_cmds.setup then
+    debug_cmds.setup()
+  end
+end)

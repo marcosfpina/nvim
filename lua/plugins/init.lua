@@ -5,12 +5,10 @@ return {
   -- Library used by other plugins
   { "nvim-lua/plenary.nvim", lazy = true },
 
-  -- Better vim.ui interfaces
-  { "stevearc/dressing.nvim", event = "VeryLazy" },
-
   -- Session management
   {
     "folke/persistence.nvim",
+    enabled = false,
     event = "BufReadPre",
     opts = {
       options = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp" },
@@ -139,6 +137,7 @@ return {
   -- Highlight colors
   {
     "NvChad/nvim-colorizer.lua",
+    enabled = false,
     event = "BufReadPost",
     opts = {
       filetypes = { "*", "!lazy" },
@@ -235,9 +234,10 @@ return {
   -- Which-key for keybinding help
   {
     "folke/which-key.nvim",
+    enabled = false,
     event = "VeryLazy",
     opts = {
-      plugins = { spelling = true },
+      plugins = { spelling = false },
       notify = false, -- Disable notifications/warnings
       defaults = {
         mode = { "n", "v" },

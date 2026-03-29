@@ -354,6 +354,7 @@ return {
   -- Trouble integration for better diagnostics
   {
     "folke/trouble.nvim",
+    enabled = false,
     cmd = { "Trouble" },
     opts = {
       use_diagnostic_signs = true,

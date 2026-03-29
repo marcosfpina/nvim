@@ -32,12 +32,18 @@ return {
           colors.error = "#ff6666"
         end,
         on_highlights = function(highlights, colors)
-          highlights.LineNr = { fg = colors.blue }
+          highlights.LineNr = { fg = colors.dark5 }
+          highlights.CursorLineNr = { fg = colors.blue, bold = true }
+          highlights.CursorLine = { bg = colors.bg_highlight }
           highlights.TelescopePromptPrefix = { fg = colors.purple }
-          highlights.DiagnosticVirtualTextError = { bg = colors.bg_dark, fg = colors.error }
-          highlights.DiagnosticVirtualTextWarn = { bg = colors.bg_dark, fg = colors.warning }
-          highlights.DiagnosticVirtualTextInfo = { bg = colors.bg_dark, fg = colors.info }
-          highlights.DiagnosticVirtualTextHint = { bg = colors.bg_dark, fg = colors.hint }
+          highlights.DiagnosticVirtualTextError = { bg = "NONE", fg = colors.error }
+          highlights.DiagnosticVirtualTextWarn = { bg = "NONE", fg = colors.warning }
+          highlights.DiagnosticVirtualTextInfo = { bg = "NONE", fg = colors.info }
+          highlights.DiagnosticVirtualTextHint = { bg = "NONE", fg = colors.hint }
+          highlights.DiagnosticUnderlineError = { undercurl = true, sp = colors.error }
+          highlights.DiagnosticUnderlineWarn = { underline = false }
+          highlights.DiagnosticUnderlineInfo = { underline = false }
+          highlights.DiagnosticUnderlineHint = { underline = false }
         end,
       })
       
@@ -121,6 +127,7 @@ return {
             statusline = { "dashboard", "alpha" },
             winbar = { "dashboard", "alpha", "neo-tree" },
           },
+          always_divide_middle = true,
         },
         sections = {
           lualine_a = {
@@ -140,7 +147,7 @@ return {
           },
           lualine_c = {
             { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-            { "filename", path = 1, symbols = { modified = " ", readonly = " ", unnamed = " " } },
+            { "filename", path = 1, shorting_target = 40, symbols = { modified = " [+]", readonly = " [ro]", unnamed = "[No Name]" } },
             {
               "diagnostics",
               sources = { "nvim_diagnostic" },
@@ -151,7 +158,7 @@ return {
                 hint = icons.Hint .. " ",
               },
             },
-            { "searchcount" },
+            { "searchcount", maxcount = 999, timeout = 120 },
           },
           lualine_x = {
             {
@@ -194,32 +201,10 @@ return {
         },
         tabline = {},
         winbar = {
-          lualine_c = {
-            {
-              function()
-                local navic = require("nvim-navic")
-                if navic.is_available() then
-                  return navic.get_location()
-                end
-                return ""
-              end,
-              cond = function()
-                local navic = require("nvim-navic")
-                return navic.is_available()
-              end,
-              color = { fg = "#7aa2f7" },
-            },
-          },
+          lualine_c = {},
         },
         inactive_winbar = {
-          lualine_c = {
-            {
-              function()
-                return vim.fn.expand("%:t")
-              end,
-              color = { fg = "#565f89" },
-            },
-          },
+          lualine_c = {},
         },
         extensions = {
           "nvim-tree",
@@ -305,8 +290,8 @@ return {
         },
         color_icons = true,
         show_buffer_icons = true,
-        show_buffer_close_icons = true,
-        show_close_icon = true,
+        show_buffer_close_icons = false,
+        show_close_icon = false,
         show_tab_indicators = true,
         separator_style = "thin",
         always_show_bufferline = false,
@@ -351,8 +336,8 @@ return {
         tab_char = "│",
       },
       scope = {
-        enabled = true,
-        show_start = true,
+        enabled = false,
+        show_start = false,
         show_end = false,
         injected_languages = true,
         highlight = { "Function", "Label" },
@@ -837,46 +822,35 @@ return {
     "echasnovski/mini.animate",
     event = "VeryLazy",
     opts = function()
-      local mouse_scrolled = false
-      
-      for _, scroll in ipairs({ "Up", "Down" }) do
-        local key = "<ScrollWheel" .. scroll .. ">"
-        vim.keymap.set({ "", "i" }, key, function()
-          mouse_scrolled = true
-          return key
-        end, { expr = true })
-      end
-      
       local animate = require("mini.animate")
-      
       return {
         resize = {
-          timing = animate.gen_timing.linear({ duration = 80, unit = "total" }),
+          enable = false, -- Disable for perf
         },
         scroll = {
-          timing = animate.gen_timing.linear({ duration = 120, unit = "total" }),
-          subscroll = animate.gen_subscroll.equal({
-            predicate = function()
-              if mouse_scrolled then
-                mouse_scrolled = false
-                return false
-              end
-              return true
-            end,
-          }),
+          enable = false, -- Disable scroll animation (Major stutter cause)
         },
         cursor = {
-          timing = animate.gen_timing.exponential({ easing = "out", duration = 80, unit = "total" }),
-          path = animate.gen_path.line(),
+          enable = false, -- Disable cursor animation (Major stutter cause)
         },
         open = {
           enable = false,
         },
         close = {
           enable = false,
-        },
+        }
       }
     end,
+  },
+
+  -- ╭─────────────────────────────────────────────────────────╮
+  -- │                   Smooth Scrolling                       │
+  -- ╰─────────────────────────────────────────────────────────╯
+  {
+    "karb94/neoscroll.nvim",
+    enabled = false, -- Disabled to fix stutter
+    event = "VeryLazy",
+    opts = {},
   },
 
   -- ╭─────────────────────────────────────────────────────────╮

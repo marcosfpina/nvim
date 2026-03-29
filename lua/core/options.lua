@@ -40,22 +40,25 @@ opt.signcolumn = "yes"            -- Always show sign column
 opt.showmode = false              -- Don't show mode (statusline handles this)
 opt.title = true                  -- Set terminal title
 opt.wrap = false                  -- Don't wrap lines
+opt.laststatus = 3                -- One global statusline keeps the layout calmer
+opt.cmdheight = 0                 -- Hide idle command line noise when possible
+opt.showtabline = 1               -- Only show tabline when it adds value
 
 opt.fillchars = {
-  horiz = "━",
-  horizup = "┻",
-  horizdown = "┳",
-  vert = "┃",
-  vertleft = "┫",
-  vertright = "┣",
-  verthoriz = "╋",
+  horiz = "─",
+  horizup = "┴",
+  horizdown = "┬",
+  vert = "│",
+  vertleft = "┤",
+  vertright = "├",
+  verthoriz = "┼",
   fold = " ",
   eob = " ",                      -- No ~ for empty lines
   diff = "╱",                     -- Diagonal lines for diff
-  msgsep = "‾",
+  msgsep = " ",
 }
 
-opt.list = true                   -- Show some invisible characters
+opt.list = false                  -- Keep invisible characters out of the way by default
 opt.listchars = {
   tab = "→ ",
   trail = "·",
@@ -68,11 +71,11 @@ opt.listchars = {
 -- │                   Scrolling and Spacing                  │
 -- ╰─────────────────────────────────────────────────────────╯
 
-opt.scrolloff = 10                -- Keep 10 lines above/below cursor
-opt.sidescrolloff = 8             -- Keep 8 columns left/right of cursor
-opt.pumheight = 12                -- Maximum number of items in completion menu
-opt.pumblend = 10                 -- Slight transparency for popup menu
-opt.winblend = 10                 -- Slight transparency for floating windows
+opt.scrolloff = 6                 -- Keep context without wasting too much space
+opt.sidescrolloff = 4             -- Keep a bit of horizontal context
+opt.pumheight = 10                -- Tighter completion menu
+opt.pumblend = 0                  -- Opaque popups are easier to read
+opt.winblend = 0                  -- Opaque floating windows improve contrast
 
 -- ╭─────────────────────────────────────────────────────────╮
 -- │                   Tab/Indent Settings                    │
@@ -91,9 +94,9 @@ opt.linebreak = true              -- Break at word boundaries
 
 opt.ignorecase = true             -- Ignore case in search patterns
 opt.smartcase = true              -- Override ignorecase if pattern has uppercase
-opt.hlsearch = true               -- Highlight search results
+opt.hlsearch = false              -- Don't leave search highlights hanging around
 opt.incsearch = true              -- Show search matches as you type
-opt.inccommand = "split"          -- Preview substitutions live
+opt.inccommand = "nosplit"        -- Preview substitutions without opening extra splits
 
 -- ╭─────────────────────────────────────────────────────────╮
 -- │                   File Handling                          │
@@ -110,7 +113,7 @@ opt.hidden = true                 -- Allow switching buffers without saving
 -- │                   Timing and System                      │
 -- ╰─────────────────────────────────────────────────────────╯
 
-opt.updatetime = 100              -- Faster CursorHold events, better UX
+opt.updatetime = 250              -- Reduce idle event churn without feeling sluggish
 opt.timeoutlen = 300              -- Time to wait for mapped sequences
 opt.ttimeoutlen = 10              -- Time to wait for key codes
 opt.redrawtime = 1500             -- Maximum time spent redrawing
@@ -175,6 +178,7 @@ opt.foldenable = true             -- Enable folding
 opt.modeline = false              -- Disable modeline for security
 opt.secure = true                 -- Restrict access in exrc files
 opt.spelllang = "en_us"           -- Spellcheck language
+opt.spell = false                 -- No spell highlights unless explicitly enabled
 
 -- ╭─────────────────────────────────────────────────────────╮
 -- │                   Performance and Diffing                │

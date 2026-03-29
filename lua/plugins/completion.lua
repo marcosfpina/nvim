@@ -47,6 +47,7 @@ return {
       end
 
       cmp.setup({
+        preselect = cmp.PreselectMode.None,
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -55,6 +56,7 @@ return {
         
         completion = {
           completeopt = "menu,menuone,noinsert",
+          autocomplete = false,
         },
         
         window = {
@@ -95,10 +97,10 @@ return {
           ["<C-f>"] = cmp.mapping.scroll_docs(4),
           ["<C-Space>"] = cmp.mapping.complete(),
           ["<C-e>"] = cmp.mapping.abort(),
-          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          ["<CR>"] = cmp.mapping.confirm({ select = false }),
           ["<S-CR>"] = cmp.mapping.confirm({
             behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
+            select = false,
           }),
           
           -- Tab mapping for completion and snippets
@@ -133,9 +135,7 @@ return {
         }),
         
         experimental = {
-          ghost_text = {
-            hl_group = "CmpGhostText",
-          },
+          ghost_text = false,
         },
         
         sorting = {

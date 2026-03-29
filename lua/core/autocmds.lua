@@ -77,7 +77,7 @@ autocmd(editor_behavior, "VimResized", "*", function()
 end, "Resize splits when window is resized")
 
 -- Check if file changed on disk and reload
-autocmd(editor_behavior, { "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, "*", function()
+autocmd(editor_behavior, { "FocusGained", "BufEnter" }, "*", function()
   if not vim.bo.readonly and vim.fn.bufname() ~= "" and vim.bo.buftype == "" then
     vim.cmd("checktime")
   end
@@ -109,48 +109,6 @@ end, "Auto-close terminal buffer on clean exit")
 -- ╰─────────────────────────────────────────────────────────╯
 
 local lsp_behavior = create_augroup("lsp_behavior")
-
--- Show diagnostics on cursor hold
-autocmd(lsp_behavior, "CursorHold", "*", function()
-  local opts = {
-    focusable = false,
-    close_events = { "BufLeave", "CursorMoved", "InsertEnter", "FocusLost" },
-    source = "always",
-    prefix = " ",
-    scope = "cursor",
-  }
-  vim.diagnostic.open_float(nil, opts)
-end, "Show diagnostic popup on cursor hold")
-
--- Format on save for supported filetypes
-autocmd(lsp_behavior, "BufWritePre", {
-  "*.lua", "*.py", "*.js", "*.jsx", "*.ts", "*.tsx", "*.json", "*.go", "*.rs"
-}, function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local line_count = vim.api.nvim_buf_line_count(bufnr)
-  
-  if line_count > 10000 then
-    vim.notify("File too large for auto-formatting", vim.log.levels.WARN)
-    return
-  end
-  
-  local clients = vim.lsp.get_clients({ bufnr = bufnr })
-  local can_format = false
-  
-  for _, client in pairs(clients) do
-    if client.server_capabilities.documentFormattingProvider then
-      can_format = true
-      break
-    end
-  end
-  
-  if can_format then
-    vim.lsp.buf.format({
-      timeout_ms = 1000,
-      async = false,
-    })
-  end
-end, "Format on save for supported filetypes")
 
 -- ╭─────────────────────────────────────────────────────────╮
 -- │                   Performance Optimizations              │
@@ -196,8 +154,9 @@ end, "Python-specific settings")
 autocmd(filetype_settings, "FileType", "markdown", function()
   vim.opt_local.wrap = true
   vim.opt_local.linebreak = true
-  vim.opt_local.spell = true
-  vim.opt_local.conceallevel = 2
+  vim.opt_local.spell = false
+  vim.opt_local.conceallevel = 0
+  vim.opt_local.colorcolumn = ""
 end, "Markdown-specific settings")
 
 -- Shell/bash/zsh files
@@ -230,7 +189,8 @@ end, "Dockerfile-specific settings")
 
 -- Initialize folding for supported filetypes after loading
 autocmd(filetype_settings, "FileType", "*", function()
-  if vim.fn.exists("loaded_ufo") ~= 0 then
+  local ok, ufo = pcall(require, "ufo")
+  if ok and ufo then
     vim.cmd("UfoAttach")
   end
 end, "Initialize folding with nvim-ufo when available")
@@ -240,11 +200,6 @@ end, "Initialize folding with nvim-ufo when available")
 -- ╰─────────────────────────────────────────────────────────╯
 
 local ui_refinements = create_augroup("ui_refinements")
-
--- Auto-center insert mode
-autocmd(ui_refinements, "InsertEnter", "*", function()
-  vim.cmd("norm zz")
-end, "Center view when entering insert mode")
 
 -- Apply TokyoNight customizations after colorscheme loads
 autocmd(ui_refinements, "ColorScheme", "tokyonight*", function()

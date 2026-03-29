@@ -10,17 +10,7 @@ return {
     event = "VeryLazy",
     dependencies = {
       "MunifTanjim/nui.nvim",
-      {
-        "rcarriga/nvim-notify",
-        opts = {
-          timeout = 1500, -- Fast timeout: 1.5 seconds
-          max_width = 60,
-          max_height = 10,
-          render = "compact",
-          stages = "fade",
-          top_down = true,
-        },
-      },
+      "rcarriga/nvim-notify",
     },
     init = function()
       -- Ensure lazyredraw is disabled for Noice compatibility
@@ -33,19 +23,8 @@ return {
           ["vim.lsp.util.stylize_markdown"] = true,
           ["cmp.entry.get_documentation"] = true,
         },
-        hover = {
-          enabled = true,
-          silent = false,
-        },
-        signature = {
-          enabled = true,
-          auto_open = {
-            enabled = true,
-            trigger = true,
-            luasnip = true,
-            throttle = 50,
-          },
-        },
+        hover = { enabled = true, silent = false },
+        signature = { enabled = true, auto_open = { enabled = false } },
       },
       presets = {
         bottom_search = true,
@@ -54,13 +33,32 @@ return {
         inc_rename = false,
         lsp_doc_border = true,
       },
+      views = {
+        cmdline_popup = {
+          position = { row = 5, col = "50%" },
+          size = { width = 60, height = "auto" },
+          border = { style = "rounded", padding = { 0, 1 } },
+          filter_options = {},
+          win_options = {
+            winblend = 10, -- Glass effect
+            winhighlight = "NormalFloat:NormalFloat,FloatBorder:FloatBorder",
+          },
+        },
+        popupmenu = {
+          relative = "editor",
+          position = { row = 8, col = "50%" },
+          size = { width = 60, height = 10 },
+          border = { style = "rounded", padding = { 0, 1 } },
+          win_options = { winblend = 10, winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" } },
+        },
+      },
       messages = {
         enabled = true,
         view = "notify",
         view_error = "notify",
         view_warn = "notify",
         view_history = "messages",
-        view_search = "virtualtext",
+        view_search = "mini",
       },
       cmdline = {
         enabled = true,
@@ -140,6 +138,7 @@ return {
   -- ╰─────────────────────────────────────────────────────────╯
   {
     "petertriho/nvim-scrollbar",
+    enabled = false,
     event = "VeryLazy",
     dependencies = {
       "kevinhwang91/nvim-hlslens",
@@ -150,6 +149,13 @@ return {
       local colors = require("tokyonight.colors").setup()
 
       scrollbar.setup({
+        show = false,
+        show_in_active_only = false,
+        set_highlights = true,
+        folds = 1000, -- Handle folds better
+        max_lines = false, -- Disable limit
+        hide_if_all_visible = false,
+        throttle_ms = 100, -- THROTTLE: Only update every 100ms
         handle = {
           color = colors.bg_highlight,
           blend = 0,
@@ -316,22 +322,24 @@ return {
   },
 
   -- ╭─────────────────────────────────────────────────────────╮
-  -- │              Indent Scope Animation                      │
+  -- │              Indent Scope (Static for Perf)            │
   -- ╰─────────────────────────────────────────────────────────╯
   {
     "echasnovski/mini.indentscope",
+    enabled = false,
     event = { "BufReadPre", "BufNewFile" },
     opts = {
       symbol = "│",
       options = { try_as_border = true },
-      draw = {
-        delay = 50,
-        animation = function()
-          return 10
-        end,
-      },
     },
-    init = function()
+    config = function(_, opts)
+      -- Configure draw options *after* the plugin is loaded
+      opts.draw = {
+        delay = 0, -- Instant
+        animation = function() return 0 end, -- No animation = No stutter (Manual override)
+      }
+      require("mini.indentscope").setup(opts)
+
       vim.api.nvim_create_autocmd("FileType", {
         pattern = {
           "help",
@@ -425,6 +433,7 @@ return {
   -- ╰─────────────────────────────────────────────────────────╯
   {
     "NvChad/nvim-colorizer.lua",
+    enabled = false,
     event = { "BufReadPre", "BufNewFile" },
     opts = {
       filetypes = { "*" },
@@ -453,6 +462,7 @@ return {
   -- ╰─────────────────────────────────────────────────────────╯
   {
     "SmiteshP/nvim-navic",
+    enabled = false,
     lazy = true,
     init = function()
       vim.g.navic_silence = true
@@ -486,7 +496,7 @@ return {
     lazy = true,
     opts = {
       flavour = "mocha",
-      transparent_background = false,
+      transparent_background = true, -- Enable transparency for cool look
       term_colors = true,
       integrations = {
         cmp = true,
