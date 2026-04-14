@@ -1,9 +1,6 @@
 # Neovim Configuration: Diagnostic, Debugging & Flake Migration
 
-**Repository**: https://github.com/VoidNxSEC/nvim  
-**Author**: VoidNxSEC  
-**Last Updated**: 2025-01-07  
-**Status**: Active Development
+**Repository**: <https://github.com/VoidNxSEC/nvim>**Author**: VoidNxSEC**Last Updated**: 2025-01-07**Status**: Active Development
 
 ## 📋 Table of Contents
 
@@ -43,7 +40,7 @@
 
 **Run these commands inside Neovim:**
 
-```vim
+```javascript
 " Check configuration status
 :NvimConfigStatus
 
@@ -112,7 +109,7 @@ NVIM_DEV_MODE=1 nvim
 
 **Inside Neovim, check detailed logs:**
 
-```vim
+```javascript
 :lua print(vim.inspect(_G.nvim_config.metrics.module_load_times))
 :messages
 ```
@@ -121,7 +118,7 @@ NVIM_DEV_MODE=1 nvim
 
 **Test lazy.nvim loading manually:**
 
-```lua
+```javascript
 -- In Neovim command mode
 :lua local ok, lazy = pcall(require, "lazy"); print("Lazy loaded:", ok, lazy)
 
@@ -135,12 +132,14 @@ NVIM_DEV_MODE=1 nvim
 ### 1.6 Expected Output
 
 **Healthy System:**
+
 - `:checkhealth` shows no critical errors
 - `lazy.nvim` is found and loaded
 - Plugins are loaded successfully
 - No fatal errors in `_G.nvim_config.state.errors`
 
 **Problem Indicators:**
+
 - "Lazy.nvim not available" warnings
 - Empty plugin list in `:Lazy`
 - Fallback utilities being used
@@ -153,8 +152,9 @@ NVIM_DEV_MODE=1 nvim
 
 ### 2.1 Current Problem
 
-**In `nixos/home.nix`:**
-```nix
+**In nixos/home.nix:**
+
+```javascript
 home.file = {
   ".config/nvim/init.lua".text = ''
     # Embedded init.lua content here...
@@ -163,6 +163,7 @@ home.file = {
 ```
 
 **Issues:**
+
 - Every `nixos-rebuild` overwrites the file
 - No way to edit and test quickly
 - Files are read-only in Nix store
@@ -170,10 +171,11 @@ home.file = {
 
 ### 2.2 Solution: Use Symlink
 
-**Modify `nixos/home.nix`:**
+**Modify nixos/home.nix:**
 
 **Option A: Direct Source (Recommended)**
-```nix
+
+```javascript
 home.file = {
   # Remove the embedded init.lua
   # ".config/nvim/init.lua".text = ''...'';  # DELETE THIS
@@ -187,7 +189,8 @@ home.file = {
 ```
 
 **Option B: Explicit Symlink**
-```nix
+
+```javascript
 home.file = {
   ".config/nvim" = {
     source = config.lib.file.mkOutOfStoreSymlink 
@@ -197,7 +200,8 @@ home.file = {
 ```
 
 **Option C: XDG Directory**
-```nix
+
+```javascript
 xdg.configFile = {
   "nvim" = {
     source = /home/kernelcore/.config/nvim;
@@ -209,6 +213,7 @@ xdg.configFile = {
 ### 2.3 Implementation Steps
 
 **Step 1: Backup Current Config**
+
 ```bash
 # Backup embedded config
 cp ~/.config/nvim/init.lua ~/nvim-init-backup.lua
@@ -219,6 +224,7 @@ git status
 ```
 
 **Step 2: Modify home.nix**
+
 ```bash
 # Edit home.nix
 nvim ~/nixos/home.nix
@@ -228,6 +234,7 @@ nvim ~/nixos/home.nix
 ```
 
 **Step 3: Apply Changes**
+
 ```bash
 # Rebuild system
 sudo nixos-rebuild switch --flake /etc/nixos#kernelcore --show-trace
@@ -237,6 +244,7 @@ sudo nixos-rebuild switch --flake ~/nixos#kernelcore
 ```
 
 **Step 4: Verify Symlink**
+
 ```bash
 # Check if it's now a symlink
 ls -la ~/.config/nvim/
@@ -250,6 +258,7 @@ realpath ~/.config/nvim/init.lua
 ```
 
 **Step 5: Test Editability**
+
 ```bash
 # Try editing a file
 touch ~/.config/nvim/test.txt
@@ -260,11 +269,7 @@ rm ~/.config/nvim/test.txt
 
 ### 2.4 Benefits After Decoupling
 
-✅ **Instant iteration**: Edit files and `:source %` to test  
-✅ **Git integration**: Direct commits and pulls  
-✅ **Plugin management**: lazy.nvim can write to disk  
-✅ **No rebuilds**: System rebuild only for dependencies  
-✅ **Development workflow**: Standard editor development
+✅ **Instant iteration**: Edit files and `:source %` to test✅ **Git integration**: Direct commits and pulls✅ **Plugin management**: lazy.nvim can write to disk✅ **No rebuilds**: System rebuild only for dependencies✅ **Development workflow**: Standard editor development
 
 ---
 
@@ -272,13 +277,15 @@ rm ~/.config/nvim/test.txt
 
 ### 3.1 Current Issues
 
-**In `lua/core/lazy.lua`:**
+**In lua/core/lazy.lua:**
+
 - Multiple `pcall()` with silent failures
 - Early `return` statements mask errors
 - Insufficient logging of failure causes
 - Hard to debug what's actually failing
 
-**In `init.lua`:**
+**In init.lua:**
+
 - Error handling too permissive
 - Fallback modes hide real problems
 - Users don't know plugins aren't loading
@@ -287,7 +294,7 @@ rm ~/.config/nvim/test.txt
 
 **Create improved version with detailed logging:**
 
-```lua
+```javascript
 -- lua/core/lazy.lua
 -- Enhanced lazy.nvim setup with comprehensive logging
 
@@ -465,9 +472,9 @@ return true
 
 ### 3.3 Enhanced Health Check
 
-**Add to `init.lua` in the HEALTH CHECK SYSTEM section:**
+**Add to init.lua in the HEALTH CHECK SYSTEM section:**
 
-```lua
+```javascript
 -- Register lazy.nvim health check
 HealthCheck.register("Lazy.nvim availability", function()
   local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -518,7 +525,7 @@ NVIM_DEV_MODE=1 nvim
 
 ### 4.1 Flake Structure
 
-```
+```sql
 ~/.config/nvim/
 ├── flake.nix              # Main flake
 ├── flake.lock             # Lock file
@@ -534,9 +541,9 @@ NVIM_DEV_MODE=1 nvim
 
 ### 4.2 Create flake.nix
 
-**Create `~/.config/nvim/flake.nix`:**
+**Create \~/.config/nvim/flake.nix:**
 
-```nix
+```javascript
 {
   description = "Production-Grade Neovim Configuration";
 
@@ -633,9 +640,9 @@ NVIM_DEV_MODE=1 nvim
 
 ### 4.3 Create Nix Modules
 
-**Create `nix/dependencies.nix`:**
+**Create nix/dependencies.nix:**
 
-```nix
+```javascript
 { pkgs }:
 {
   # Essential dependencies
@@ -742,9 +749,9 @@ git push -u origin main
 
 ### 5.1 Integrate into Main Flake
 
-**Modify your main `nixos/flake.nix`:**
+**Modify your main nixos/flake.nix:**
 
-```nix
+```javascript
 {
   description = "home sweet home";
 
@@ -795,9 +802,9 @@ git push -u origin main
 
 ### 5.2 Simplify home.nix
 
-**Update `nixos/home.nix`:**
+**Update nixos/home.nix:**
 
-```nix
+```javascript
 {
   config,
   pkgs,
@@ -870,62 +877,71 @@ sudo nixos-rebuild switch --flake .#kernelcore
 Run through this checklist to verify everything works:
 
 #### Core Functionality
-- [ ] Neovim starts without errors
-- [ ] `:checkhealth` shows no critical issues
-- [ ] `:NvimConfigStatus` shows all modules loaded
-- [ ] Leader key (`<Space>`) works
-- [ ] Basic editing (insert, visual, etc.) works
+
+- Neovim starts without errors
+- `:checkhealth` shows no critical issues
+- `:NvimConfigStatus` shows all modules loaded
+- Leader key (`<Space>`) works
+- Basic editing (insert, visual, etc.) works
 
 #### Plugin Manager
-- [ ] `:Lazy` opens plugin manager
-- [ ] `:Lazy install` can install plugins
-- [ ] `:Lazy update` can update plugins
-- [ ] `:Lazy clean` can remove unused plugins
-- [ ] Plugin loading is lazy (fast startup)
+
+- `:Lazy` opens plugin manager
+- `:Lazy install` can install plugins
+- `:Lazy update` can update plugins
+- `:Lazy clean` can remove unused plugins
+- Plugin loading is lazy (fast startup)
 
 #### Telescope
-- [ ] `<leader>ff` opens file finder
-- [ ] `<leader>fg` opens live grep
-- [ ] `<leader>fb` opens buffer list
-- [ ] File preview works
-- [ ] Fuzzy finding works correctly
+
+- `<leader>ff` opens file finder
+- `<leader>fg` opens live grep
+- `<leader>fb` opens buffer list
+- File preview works
+- Fuzzy finding works correctly
 
 #### LSP
-- [ ] `gd` goes to definition
-- [ ] `gr` shows references
-- [ ] `K` shows hover documentation
-- [ ] `<leader>ca` shows code actions
-- [ ] `<leader>cf` formats code
-- [ ] Diagnostics show up
+
+- `gd` goes to definition
+- `gr` shows references
+- `K` shows hover documentation
+- `<leader>ca` shows code actions
+- `<leader>cf` formats code
+- Diagnostics show up
 
 #### Completion
-- [ ] Autocomplete triggers in insert mode
-- [ ] Tab/Shift-Tab cycles through completions
-- [ ] Snippet expansion works
-- [ ] Sources (LSP, buffer, path) work
+
+- Autocomplete triggers in insert mode
+- Tab/Shift-Tab cycles through completions
+- Snippet expansion works
+- Sources (LSP, buffer, path) work
 
 #### Treesitter
-- [ ] Syntax highlighting works
-- [ ] Code folding works
-- [ ] Indent guides work
-- [ ] Text objects work
+
+- Syntax highlighting works
+- Code folding works
+- Indent guides work
+- Text objects work
 
 #### Git Integration
-- [ ] Git signs show in gutter
-- [ ] `]c` and `[c` navigate hunks
-- [ ] `<leader>hs` stages hunks
-- [ ] `<leader>hb` shows blame
+
+- Git signs show in gutter
+- `]c` and `[c` navigate hunks
+- `<leader>hs` stages hunks
+- `<leader>hb` shows blame
 
 #### File Explorer
-- [ ] File explorer opens
-- [ ] Can navigate directories
-- [ ] Can create/delete files
-- [ ] Can rename files
+
+- File explorer opens
+- Can navigate directories
+- Can create/delete files
+- Can rename files
 
 #### Terminal
-- [ ] Terminal can open
-- [ ] Can switch between editor and terminal
-- [ ] Multiple terminals work
+
+- Terminal can open
+- Can switch between editor and terminal
+- Multiple terminals work
 
 ### 6.2 Performance Tests
 
@@ -993,6 +1009,7 @@ nix run github:VoidNxSEC/nvim  # if published
 ### 7.1 lazy.nvim Not Loading
 
 **Symptoms:**
+
 - Warning: "Lazy.nvim not available"
 - `:Lazy` command not found
 - No plugins loaded
@@ -1000,32 +1017,14 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Check if lazy exists:**
-   ```bash
-   ls -la ~/.local/share/nvim/lazy/lazy.nvim
-   ```
-
 2. **Install manually if missing:**
-   ```bash
-   git clone --filter=blob:none https://github.com/folke/lazy.nvim.git \
-     --branch=stable \
-     ~/.local/share/nvim/lazy/lazy.nvim
-   ```
-
 3. **Check permissions:**
-   ```bash
-   ls -la ~/.local/share/nvim/
-   # Should be owned by your user, not root
-   ```
-
 4. **Re-initialize:**
-   ```bash
-   rm -rf ~/.local/share/nvim/lazy
-   nvim  # Will auto-install on next start
-   ```
 
 ### 7.2 Plugins Not Loading
 
 **Symptoms:**
+
 - `:Lazy` shows empty list
 - Telescope/LSP not working
 - "module not found" errors
@@ -1033,31 +1032,14 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Check plugin directory:**
-   ```bash
-   ls -la ~/.config/nvim/lua/plugins/
-   ```
-
 2. **Verify imports:**
-   ```vim
-   :lua print(vim.inspect(require("lazy.core.config").spec.modules))
-   ```
-
 3. **Force reinstall:**
-   ```vim
-   :Lazy clean
-   :Lazy install
-   :Lazy sync
-   ```
-
 4. **Check for errors:**
-   ```vim
-   :Lazy log
-   :messages
-   ```
 
 ### 7.3 Read-Only File System
 
 **Symptoms:**
+
 - Can't save files in `~/.config/nvim/`
 - "Permission denied" errors
 - Files owned by root or in Nix store
@@ -1065,22 +1047,13 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Check ownership:**
-   ```bash
-   ls -la ~/.config/nvim/
-   sudo chown -R $USER:$USER ~/.config/nvim/
-   ```
-
 2. **Verify it's not a Nix store symlink:**
-   ```bash
-   realpath ~/.config/nvim/init.lua
-   # Should NOT contain /nix/store/
-   ```
-
 3. **Re-apply Phase 2** (Decouple from Nix Store)
 
 ### 7.4 System Dependencies Missing
 
 **Symptoms:**
+
 - Telescope live grep doesn't work
 - "rg not found" or "fd not found"
 - Compilation errors for plugins
@@ -1088,30 +1061,13 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Install via Nix:**
-   ```nix
-   # In configuration.nix or home.nix
-   home.packages = with pkgs; [
-     ripgrep
-     fd
-     gcc
-     gnumake
-     cmake
-   ];
-   ```
-
 2. **Or use the flake** (includes all deps):
-   ```bash
-   nix develop ~/path/to/nvim-flake
-   ```
-
 3. **Check if available:**
-   ```bash
-   which rg fd gcc make
-   ```
 
 ### 7.5 LSP Not Working
 
 **Symptoms:**
+
 - No completions
 - No go-to-definition
 - No diagnostics
@@ -1119,30 +1075,14 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Check Mason:**
-   ```vim
-   :Mason
-   :LspInfo
-   ```
-
 2. **Install language servers:**
-   ```vim
-   :Mason
-   " Navigate and press 'i' to install servers
-   ```
-
 3. **Check if LSP is attached:**
-   ```vim
-   :lua print(vim.inspect(vim.lsp.get_active_clients()))
-   ```
-
 4. **Restart LSP:**
-   ```vim
-   :LspRestart
-   ```
 
 ### 7.6 Telescope Not Finding Files
 
 **Symptoms:**
+
 - Empty results in file finder
 - Live grep doesn't work
 - Slow searching
@@ -1150,32 +1090,14 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Check ripgrep:**
-   ```bash
-   which rg
-   rg --version
-   ```
-
 2. **Check fd:**
-   ```bash
-   which fd
-   fd --version
-   ```
-
 3. **Test manually:**
-   ```bash
-   cd ~/projects
-   rg "function"
-   fd ".lua$"
-   ```
-
 4. **Rebuild telescope-fzf-native:**
-   ```vim
-   :Lazy build telescope-fzf-native.nvim
-   ```
 
 ### 7.7 Git Signs Not Showing
 
 **Symptoms:**
+
 - No git indicators in gutter
 - Git commands not working
 - Can't stage hunks
@@ -1183,23 +1105,13 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Check if in git repo:**
-   ```bash
-   git status
-   ```
-
 2. **Verify gitsigns loaded:**
-   ```vim
-   :lua print(package.loaded["gitsigns"])
-   ```
-
 3. **Restart gitsigns:**
-   ```vim
-   :Gitsigns refresh
-   ```
 
 ### 7.8 Slow Startup Time
 
 **Symptoms:**
+
 - Neovim takes > 100ms to start
 - Feels sluggish
 - `:Lazy profile` shows slow plugins
@@ -1207,35 +1119,14 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Profile startup:**
-   ```bash
-   nvim --startuptime startup.log +q
-   cat startup.log
-   ```
-
 2. **Check lazy loading:**
-   ```vim
-   :Lazy profile
-   " Look for plugins loading on startup
-   ```
-
 3. **Disable problematic plugins:**
-   ```lua
-   -- In plugin config
-   {
-     "slow-plugin",
-     enabled = false,  -- Temporarily disable
-   }
-   ```
-
 4. **Clear cache:**
-   ```bash
-   rm -rf ~/.local/share/nvim/lazy/cache
-   rm -rf ~/.cache/nvim
-   ```
 
 ### 7.9 Flake Build Errors
 
 **Symptoms:**
+
 - `nix build` fails
 - `nix flake check` shows errors
 - Can't update flake
@@ -1243,27 +1134,9 @@ nix run github:VoidNxSEC/nvim  # if published
 **Solutions:**
 
 1. **Update flake lock:**
-   ```bash
-   nix flake update
-   ```
-
 2. **Check syntax:**
-   ```bash
-   nix flake check --show-trace
-   ```
-
 3. **Fix common issues:**
-   ```nix
-   # Ensure all inputs are defined
-   # Check that outputs match inputs
-   # Verify system is correct (x86_64-linux)
-   ```
-
 4. **Clean build cache:**
-   ```bash
-   nix-collect-garbage
-   nix store gc
-   ```
 
 ---
 
@@ -1295,7 +1168,7 @@ git push
 
 ### File Locations
 
-```
+```javascript
 ~/.config/nvim/              # Main config directory
 ~/.local/share/nvim/lazy/    # Lazy.nvim plugins
 ~/.local/share/nvim/mason/   # Mason LSP servers
@@ -1305,7 +1178,7 @@ git push
 
 ### Important Keybindings
 
-```
+```javascript
 <Space>        Leader key
 <leader>ff     Find files (Telescope)
 <leader>fg     Live grep (Telescope)
@@ -1337,6 +1210,4 @@ K              Hover documentation
 
 ---
 
-**Last Updated**: 2025-01-07  
-**Maintainer**: VoidNxSEC  
-**License**: MIT
+**Last Updated**: 2025-01-07**Maintainer**: VoidNxSEC**License**: MIT
