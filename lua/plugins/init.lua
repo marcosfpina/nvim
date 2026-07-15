@@ -5,32 +5,7 @@ return {
   -- Library used by other plugins
   { "nvim-lua/plenary.nvim", lazy = true },
 
-  -- Session management
-  {
-    "folke/persistence.nvim",
-    enabled = false,
-    event = "BufReadPre",
-    opts = {
-      options = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp" },
-    },
-    keys = {
-      {
-        "<leader>qs",
-        function() require("persistence").load() end,
-        desc = "Restore Session",
-      },
-      {
-        "<leader>ql",
-        function() require("persistence").load({ last = true }) end,
-        desc = "Restore Last Session",
-      },
-      {
-        "<leader>qd",
-        function() require("persistence").stop() end,
-        desc = "Don't Save Current Session",
-      },
-    },
-  },
+  -- Session management: see plugins/ux.lua (persistence.nvim)
 
   -- Measure startuptime
   {
@@ -231,38 +206,5 @@ return {
     },
   },
 
-  -- Which-key for keybinding help
-  {
-    "folke/which-key.nvim",
-    enabled = false,
-    event = "VeryLazy",
-    opts = {
-      plugins = { spelling = false },
-      notify = false, -- Disable notifications/warnings
-      defaults = {
-        mode = { "n", "v" },
-        ["g"] = { name = "+goto" },
-        ["gz"] = { name = "+surround" },
-        ["]"] = { name = "+next" },
-        ["["] = { name = "+prev" },
-        ["<leader><tab>"] = { name = "+tabs" },
-        ["<leader>b"] = { name = "+buffer" },
-        ["<leader>c"] = { name = "+code" },
-        ["<leader>f"] = { name = "+file/find" },
-        ["<leader>g"] = { name = "+git" },
-        ["<leader>gh"] = { name = "+hunks" },
-        ["<leader>q"] = { name = "+quit/session" },
-        ["<leader>s"] = { name = "+search" },
-        ["<leader>u"] = { name = "+ui" },
-        ["<leader>w"] = { name = "+windows" },
-        ["<leader>x"] = { name = "+diagnostics/quickfix" },
-        ["<leader>L"] = { name = "+lazy" },
-      },
-    },
-    config = function(_, opts)
-      local wk = require("which-key")
-      wk.setup(opts)
-      wk.register(opts.defaults)
-    end,
-  },
+  -- Which-key for keybinding help: see plugins/ux.lua
 }

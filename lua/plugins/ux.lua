@@ -41,7 +41,6 @@ return {
   -- ╰─────────────────────────────────────────────────────────╯
   {
     "folke/persistence.nvim",
-    enabled = false,
     event = "BufReadPre", -- this will only start session saving when an actual file was opened
     opts = {
       dir = vim.fn.stdpath("state") .. "/sessions/", -- directory where session files are saved
@@ -120,97 +119,47 @@ return {
   -- ╰─────────────────────────────────────────────────────────╯
   {
     "folke/which-key.nvim",
-    enabled = false,
     event = "VeryLazy",
     init = function()
       vim.o.timeout = true
       vim.o.timeoutlen = 300
     end,
     opts = {
+      preset = "modern",
+      win = { border = "rounded" },
       plugins = {
         marks = true,
         registers = true,
-        spelling = {
-          enabled = false,
-          suggestions = 20,
-        },
-        presets = {
-          operators = false,
-          motions = true,
-          text_objects = true,
-          windows = true,
-          nav = true,
-          z = true,
-          g = true,
-        },
+        spelling = { enabled = false },
       },
-      operators = { gc = "Comments" },
-      key_labels = {
-        -- override the label used to display some keys. It doesn't effect WK in any other way.
-        -- For example:
-        -- ["<space>"] = "SPC",
-        -- ["<cr>"] = "RET",
-        -- ["<tab>"] = "TAB",
-      },
-      icons = {
-        breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
-        separator = "➜", -- symbol used between a key and it's label
-        group = "+", -- symbol prepended to a group
-      },
-      popup_mappings = {
-        scroll_down = "<c-d>", -- binding to scroll down inside the popup
-        scroll_up = "<c-u>", -- binding to scroll up inside the popup
-      },
-      window = {
-        border = "rounded", -- none, single, double, shadow
-        position = "bottom", -- bottom, top
-        margin = { 0, 0, 0, 0 }, -- extra window margin [top, right, bottom, left]
-        padding = { 1, 2, 1, 2 }, -- extra window padding [top, right, bottom, left]
-        winblend = 0,
-      },
-      layout = {
-        height = { min = 4, max = 25 }, -- min and max height of the columns
-        width = { min = 20, max = 50 }, -- min and max width of the columns
-        spacing = 3, -- spacing between columns
-        align = "left", -- align columns left, center or right
-      },
-      ignore_missing = true, -- enable this to hide mappings for which you didn't specify a label
-      hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ " }, -- hide mapping boilerplate
-      show_help = true, -- show help message on the command line when the popup is visible
-      triggers = "auto", -- automatically setup triggers
-      -- triggers = {"<leader>"} -- or specify a list manually
-      triggers_blacklist = {
-        -- list of mode / prefixes that should never be hooked by WhichKey
-        -- this is mostly relevant for key maps that start with a native binding
-        -- most people should not need to change this
-        i = { "j", "k" },
-        v = { "j", "k" },
+      spec = {
+        { "<leader>b", group = "Buffers" },
+        { "<leader>c", group = "Code" },
+        { "<leader>d", group = "Debug" },
+        { "<leader>f", group = "Find/Format" },
+        { "<leader>g", group = "Git" },
+        { "<leader>h", group = "Harpoon/Hunks" },
+        { "<leader>l", group = "LSP" },
+        { "<leader>m", group = "Markdown" },
+        { "<leader>n", group = "Navigate/Noice" },
+        { "<leader>o", group = "Options" },
+        { "<leader>p", group = "Projects" },
+        { "<leader>q", group = "Quit/Session" },
+        { "<leader>r", group = "Refactor" },
+        { "<leader>s", group = "Search" },
+        { "<leader>t", group = "Terminal/Toggle" },
+        { "<leader>u", group = "UI/Utils" },
+        { "<leader>w", group = "Window" },
+        { "<leader>x", group = "Diagnostics" },
+        { "<leader>L", group = "Lazy" },
       },
     },
-    config = function(_, opts)
-      local wk = require("which-key")
-      wk.setup(opts)
-      
-      -- Register group names
-      wk.register({
-        ["<leader>b"] = { name = "Buffers" },
-        ["<leader>c"] = { name = "Code" },
-        ["<leader>cc"] = { name = "Copilot Chat" },
-        ["<leader>d"] = { name = "Debug" },
-        ["<leader>f"] = { name = "Find/Files" },
-        ["<leader>g"] = { name = "Git" },
-        ["<leader>h"] = { name = "Harpoon/Help" },
-        ["<leader>l"] = { name = "LSP" },
-        ["<leader>n"] = { name = "Noice" },
-        ["<leader>q"] = { name = "Quit/Session" },
-        ["<leader>r"] = { name = "Refactor" },
-        ["<leader>s"] = { name = "Search" },
-        ["<leader>sn"] = { name = "Noice" },
-        ["<leader>t"] = { name = "Terminal/Toggle" },
-        ["<leader>u"] = { name = "UI/Utils" },
-        ["<leader>w"] = { name = "Window" },
-        ["<leader>x"] = { name = "Trouble/Diagnostics" },
-      })
-    end,
+    keys = {
+      {
+        "<leader>?",
+        function() require("which-key").show({ global = false }) end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
   },
 }

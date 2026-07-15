@@ -27,29 +27,27 @@ else
   lazy_ok, lazy_err = pcall(require, "lazy")
 
   if not lazy_ok then
-    if is_nixos then
-      vim.notify(
-        "lazy.nvim not found. Install with:\ngit clone --filter=blob:none https://github.com/folke/lazy.nvim.git --branch=stable " .. lazypath,
-        vim.log.levels.ERROR,
-        { title = "Lazy.nvim" }
-      )
+    -- Bootstrap into the user data dir. This is safe on NixOS too:
+    -- ~/.local/share/nvim is user state, not system-managed. Refusing to
+    -- clone here once left the config with zero plugins after a data wipe.
+    vim.notify("Installing lazy.nvim...", vim.log.levels.INFO, { title = "Lazy.nvim" })
+    local out = vim.fn.system({
+      "git",
+      "clone",
+      "--filter=blob:none",
+      "https://github.com/folke/lazy.nvim.git",
+      "--branch=stable",
+      lazypath,
+    })
+    if vim.v.shell_error ~= 0 then
+      vim.notify("Failed to clone lazy.nvim:\n" .. out, vim.log.levels.ERROR, { title = "Lazy.nvim" })
       if _G.log then
-        _G.log.error("lazy.nvim not found at: " .. lazypath)
+        _G.log.error("lazy.nvim bootstrap failed: " .. out)
       end
-      return -- Exit early on NixOS if lazy.nvim not available
-    else
-      vim.notify("Installing lazy.nvim...", vim.log.levels.INFO, { title = "Lazy.nvim" })
-      vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable",
-        lazypath,
-      })
-      vim.opt.rtp:prepend(lazypath)
-      lazy_ok, lazy_err = pcall(require, "lazy")
+      return
     end
+    vim.opt.rtp:prepend(lazypath)
+    lazy_ok, lazy_err = pcall(require, "lazy")
   end
 end
 

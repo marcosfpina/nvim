@@ -131,14 +131,19 @@ return {
         vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
       end
 
-      -- Configure LSP handlers
-      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-        border = "rounded",
-      })
+      -- Rounded borders for LSP floats (vim.lsp.with was removed in nvim 0.11+;
+      -- hover/signature_help now accept the border directly)
+      local hover = vim.lsp.buf.hover
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.lsp.buf.hover = function(opts)
+        return hover(vim.tbl_deep_extend("force", { border = "rounded" }, opts or {}))
+      end
 
-      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-        border = "rounded",
-      })
+      local signature_help = vim.lsp.buf.signature_help
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.lsp.buf.signature_help = function(opts)
+        return signature_help(vim.tbl_deep_extend("force", { border = "rounded" }, opts or {}))
+      end
 
       -- Get capabilities from nvim-cmp
       local capabilities = vim.lsp.protocol.make_client_capabilities()

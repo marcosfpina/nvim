@@ -69,6 +69,7 @@ return {
         -- Docker & DevOps
         "dockerfile",
         "terraform",
+        "nix",
         
         -- SQL
         "sql",
