@@ -94,8 +94,18 @@ return {
     opts = function()
       local actions = require("telescope.actions")
       local actions_layout = require("telescope.actions.layout")
-      local trouble = require("trouble.sources.telescope")
-      
+
+      -- trouble.nvim is loaded lazily (cmd/keys), so its module may not be on
+      -- the runtimepath yet when telescope's opts are built. Force it to load
+      -- on demand instead of requiring it eagerly here.
+      local function trouble_open(...)
+        pcall(function() require("lazy").load({ plugins = { "trouble.nvim" } }) end)
+        local ok, trouble = pcall(require, "trouble.sources.telescope")
+        if ok then
+          trouble.open(...)
+        end
+      end
+
       return {
         defaults = {
           prompt_prefix = " ",
@@ -176,7 +186,7 @@ return {
               ["<C-w>"] = { "<c-s-w>", type = "command" },
               ["<C-r>"] = actions.to_fuzzy_refine,
               ["<C-h>"] = actions_layout.toggle_preview,
-              ["<C-s>"] = trouble.open,
+              ["<C-s>"] = trouble_open,
             },
             n = {
               ["<esc>"] = actions.close,
@@ -203,7 +213,7 @@ return {
               ["<PageDown>"] = actions.results_scrolling_down,
               ["?"] = actions.which_key,
               ["<C-h>"] = actions_layout.toggle_preview,
-              ["<C-s>"] = trouble.open,
+              ["<C-s>"] = trouble_open,
             },
           },
         },

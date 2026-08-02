@@ -94,8 +94,8 @@ return {
           highlights.CmpItemKindClass = { fg = colors.cyan }
           highlights.CmpItemKindInterface = { fg = colors.cyan }
           highlights.CmpItemKindModule = { fg = colors.orange }
-          highlights.CmpItemKindProperty = { fg = "#ffa657" }
-          highlights.CmpItemKindField = { fg = "#ffa657" }
+          highlights.CmpItemKindProperty = { fg = colors.red }
+          highlights.CmpItemKindField = { fg = colors.red }
           highlights.CmpItemKindValue = { fg = colors.magenta }
           highlights.CmpItemKindConstant = { fg = colors.magenta }
           highlights.CmpItemKindSnippet = { fg = colors.orange }
@@ -109,9 +109,9 @@ return {
           highlights.Float = { fg = colors.magenta }
           highlights.Function = { fg = colors.blue, bold = true }
           highlights["@function"] = { fg = colors.blue, bold = true }
-          highlights["@function.builtin"] = { fg = colors.cyan, bold = true }
+          highlights["@function.builtin"] = { fg = colors.cyan, bold = true, italic = true }
           highlights["@method"] = { fg = colors.blue }
-          highlights["@constructor"] = { fg = colors.cyan, bold = true }
+          highlights["@constructor"] = { fg = colors.blue, bold = true }
           highlights.Keyword = { fg = colors.green, italic = true }
           highlights.Conditional = { fg = colors.green, italic = true }
           highlights.Repeat = { fg = colors.green, italic = true }
@@ -123,13 +123,13 @@ return {
           highlights.Type = { fg = colors.cyan, bold = true }
           highlights["@type"] = { fg = colors.cyan, bold = true }
           highlights["@type.builtin"] = { fg = colors.cyan, italic = true }
-          highlights["@property"] = { fg = "#ffa657" }
-          highlights["@field"] = { fg = "#ffa657" }
+          highlights["@property"] = { fg = colors.red }
+          highlights["@field"] = { fg = colors.red }
           highlights["@variable"] = { fg = colors.fg }
           highlights["@variable.builtin"] = { fg = colors.red, italic = true }
           highlights["@constant"] = { fg = colors.magenta }
-          highlights["@constant.builtin"] = { fg = colors.red, italic = true }
-          highlights["@parameter"] = { fg = "#f0f6fc" }
+          highlights["@constant.builtin"] = { fg = colors.magenta, italic = true }
+          highlights["@parameter"] = { fg = colors.fg_dark }
           highlights["@markup.heading"] = { fg = colors.blue, bold = true }
           highlights["@markup.strong"] = { fg = colors.fg, bold = true }
           highlights["@markup.italic"] = { fg = colors.fg_dark, italic = true }

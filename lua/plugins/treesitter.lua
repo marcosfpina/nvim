@@ -200,15 +200,7 @@ return {
     },
     config = function(_, opts)
       require("nvim-treesitter.configs").setup(opts)
-      
-      -- MDX support
-      vim.filetype.add({
-        extension = {
-          mdx = "mdx",
-        },
-      })
-      vim.treesitter.language.register("markdown", "mdx")
-      
+
       -- Context commentstring
       require("ts_context_commentstring").setup({
         enable_autocmd = false,
@@ -277,5 +269,13 @@ return {
         },
       }
     end,
+  },
+
+  -- MDX support: registers the mdx filetype on the markdown parser and adds
+  -- injection queries for JSX/import/export inside .mdx files.
+  {
+    "davidmh/mdx.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    event = "BufEnter *.mdx",
   },
 }
