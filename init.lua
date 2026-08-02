@@ -266,6 +266,10 @@ else
   _G.log.fatal("Failed to load critical core modules")
 end
 
+pcall(function()
+  require("core.notify").install()
+end)
+
 --------------------------------------------------------------------------------
 -- UTILITIES INITIALIZATION
 --------------------------------------------------------------------------------

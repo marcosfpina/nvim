@@ -54,7 +54,7 @@ return {
       },
       messages = {
         enabled = true,
-        view = "notify",
+        view = "mini",
         view_error = "notify",
         view_warn = "notify",
         view_history = "messages",
@@ -87,8 +87,8 @@ return {
           opts = { skip = true },
         },
         {
-          view = "notify",
           filter = { event = "msg_showmode" },
+          opts = { skip = true },
         },
         -- Suppress better-escape.nvim notifications
         {
@@ -122,8 +122,39 @@ return {
           },
           opts = { skip = true },
         },
+        -- Treesitter/parser warnings are usually repeated per buffer/window.
+        {
+          filter = {
+            event = "msg_show",
+            kind = "wmsg",
+            find = "No parser for",
+          },
+          opts = { skip = true },
+        },
+        {
+          filter = {
+            event = "msg_show",
+            kind = "wmsg",
+            find = "treesitter",
+          },
+          opts = { skip = true },
+        },
+        {
+          filter = {
+            event = "msg_show",
+            kind = "wmsg",
+            find = "tree%-sitter",
+          },
+          opts = { skip = true },
+        },
       },
     },
+    config = function(_, opts)
+      require("noice").setup(opts)
+      pcall(function()
+        require("core.notify").install()
+      end)
+    end,
     keys = {
       { "<leader>sn", "<cmd>Noice<cr>", desc = "Noice Messages" },
       { "<leader>snl", "<cmd>Noice last<cr>", desc = "Noice Last Message" },

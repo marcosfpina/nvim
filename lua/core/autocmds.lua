@@ -189,9 +189,34 @@ end, "Dockerfile-specific settings")
 
 -- Initialize folding for supported filetypes after loading
 autocmd(filetype_settings, "FileType", "*", function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local disabled_ft = {
+    [""] = true,
+    ["NvimTree"] = true,
+    ["TelescopePrompt"] = true,
+    ["alpha"] = true,
+    ["dashboard"] = true,
+    ["help"] = true,
+    ["lazy"] = true,
+    ["mason"] = true,
+    ["neo-tree"] = true,
+    ["noice"] = true,
+    ["notify"] = true,
+    ["qf"] = true,
+    ["trouble"] = true,
+  }
+
+  if vim.api.nvim_buf_get_name(bufnr) == "" then
+    return
+  end
+
+  if vim.bo[bufnr].buftype ~= "" or disabled_ft[vim.bo[bufnr].filetype] then
+    return
+  end
+
   local ok, ufo = pcall(require, "ufo")
   if ok and ufo then
-    vim.cmd("UfoAttach")
+    pcall(vim.cmd, "silent! UfoAttach")
   end
 end, "Initialize folding with nvim-ufo when available")
 

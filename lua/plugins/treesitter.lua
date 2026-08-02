@@ -1,6 +1,30 @@
 -- ~/.config/nvim/lua/plugins/treesitter.lua
 -- Treesitter configuration for advanced syntax highlighting and code understanding
 
+local disabled_filetypes = {
+  [""] = true,
+  ["NvimTree"] = true,
+  ["TelescopePrompt"] = true,
+  ["alpha"] = true,
+  ["dashboard"] = true,
+  ["help"] = true,
+  ["lazy"] = true,
+  ["mason"] = true,
+  ["neo-tree"] = true,
+  ["noice"] = true,
+  ["notify"] = true,
+  ["qf"] = true,
+  ["trouble"] = true,
+}
+
+local disabled_buftypes = {
+  help = true,
+  nofile = true,
+  prompt = true,
+  quickfix = true,
+  terminal = true,
+}
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -82,8 +106,8 @@ return {
       -- Install parsers synchronously (only applied to `ensure_installed`)
       sync_install = false,
       
-      -- Automatically install missing parsers when entering buffer
-      auto_install = true,
+      -- Keep parser management explicit to avoid parser install/warning spam.
+      auto_install = false,
       
       -- Ignore these languages
       ignore_install = {},
@@ -92,7 +116,19 @@ return {
         enable = true,
         additional_vim_regex_highlighting = false,
         disable = function(lang, buf)
-          local max_filesize = 100 * 1024 -- 100 KB
+          if vim.api.nvim_buf_get_name(buf) == "" then
+            return true
+          end
+
+          if disabled_filetypes[vim.bo[buf].filetype] or disabled_buftypes[vim.bo[buf].buftype] then
+            return true
+          end
+
+          if lang == "zsh" then
+            return true
+          end
+
+          local max_filesize = 256 * 1024 -- 256 KB
           local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
           if ok and stats and stats.size > max_filesize then
             return true
@@ -208,10 +244,18 @@ return {
       
       -- Integrate with Comment.nvim
       local get_option = vim.filetype.get_option
+      local ts_commentstring = require("ts_context_commentstring.internal")
       vim.filetype.get_option = function(filetype, option)
-        return option == "commentstring"
-          and require("ts_context_commentstring.internal").calculate_commentstring()
-          or get_option(filetype, option)
+        if option ~= "commentstring" then
+          return get_option(filetype, option)
+        end
+
+        local ok, commentstring = pcall(ts_commentstring.calculate_commentstring)
+        if ok and commentstring then
+          return commentstring
+        end
+
+        return get_option(filetype, option)
       end
     end,
   },

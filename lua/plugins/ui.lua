@@ -653,6 +653,9 @@ return {
       local notify = require("notify")
       notify.setup(opts)
       vim.notify = notify
+      pcall(function()
+        require("core.notify").install()
+      end)
 
       vim.keymap.set("n", "<leader>un", function()
         require("notify").dismiss({ silent = true, pending = true })
@@ -834,7 +837,7 @@ return {
           c = { "treesitter", "indent" },
           cpp = { "treesitter", "indent" },
         }
-        return ft_providers[filetype] or { "treesitter", "indent" }
+        return ft_providers[filetype] or { "indent" }
       end,
       enable_get_fold_virt_text = true,
       fold_virt_text_handler = function(virt_text, lnum, end_lnum, width, truncate)
