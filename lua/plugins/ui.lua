@@ -305,7 +305,15 @@ return {
         },
         tabline = {},
         winbar = {
-          lualine_c = {},
+          lualine_c = {
+            {
+              function() return require("nvim-navic").get_location() end,
+              cond = function()
+                local ok, navic = pcall(require, "nvim-navic")
+                return ok and navic.is_available()
+              end,
+            },
+          },
         },
         inactive_winbar = {
           lualine_c = {},
@@ -948,16 +956,6 @@ return {
         }
       }
     end,
-  },
-
-  -- ╭─────────────────────────────────────────────────────────╮
-  -- │                   Smooth Scrolling                       │
-  -- ╰─────────────────────────────────────────────────────────╯
-  {
-    "karb94/neoscroll.nvim",
-    enabled = false, -- Disabled to fix stutter
-    event = "VeryLazy",
-    opts = {},
   },
 
   -- ╭─────────────────────────────────────────────────────────╮

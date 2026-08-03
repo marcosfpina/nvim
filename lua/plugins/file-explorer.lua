@@ -15,8 +15,8 @@ return {
       { "<leader>e", "<cmd>Neotree toggle<CR>", desc = "Toggle file explorer" },
       { "<leader>E", "<cmd>Neotree focus<CR>", desc = "Focus file explorer" },
       { "<leader>fe", "<cmd>Neotree float<CR>", desc = "Float file explorer" },
-      { "<leader>fg", "<cmd>Neotree float git_status<CR>", desc = "Git status" },
-      { "<leader>fb", "<cmd>Neotree float buffers<CR>", desc = "Buffers" },
+      { "<leader>eg", "<cmd>Neotree float git_status<CR>", desc = "Git status" },
+      { "<leader>eb", "<cmd>Neotree float buffers<CR>", desc = "Buffers" },
     },
     deactivate = function()
       vim.cmd([[Neotree close]])

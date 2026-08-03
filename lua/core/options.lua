@@ -108,6 +108,7 @@ opt.undofile = true               -- Enable persistent undo
 opt.undolevels = 10000            -- Maximum number of undo changes
 opt.fileencoding = "utf-8"        -- Use UTF-8 encoding
 opt.hidden = true                 -- Allow switching buffers without saving
+opt.confirm = true                -- Ask instead of discarding unsaved changes on :q
 
 -- ╭─────────────────────────────────────────────────────────╮
 -- │                   Timing and System                      │
@@ -162,6 +163,18 @@ opt.equalalways = false           -- Don't resize windows on split/close
 
 opt.mouse = "a"                   -- Enable mouse in all modes
 opt.clipboard = "unnamedplus"     -- Use system clipboard
+
+-- Over SSH there's usually no system clipboard tool available locally, so
+-- unnamedplus would silently fail. Fall back to OSC52, which relays yanks
+-- through the terminal to the host clipboard instead.
+if _G.nvim_config and _G.nvim_config.environment.is_ssh then
+  local osc52 = require("vim.ui.clipboard.osc52")
+  vim.g.clipboard = {
+    name = "OSC 52",
+    copy = { ["+"] = osc52.copy("+"), ["*"] = osc52.copy("*") },
+    paste = { ["+"] = osc52.paste("+"), ["*"] = osc52.paste("*") },
+  }
+end
 
 -- ╭─────────────────────────────────────────────────────────╮
 -- │                   Folding Settings                       │

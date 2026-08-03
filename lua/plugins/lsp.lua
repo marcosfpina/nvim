@@ -2,6 +2,13 @@
 -- LSP, Mason, linters, formatters, and diagnostics configuration
 
 return {
+  -- LSP progress spinner
+  {
+    "j-hui/fidget.nvim",
+    event = "LspAttach",
+    opts = {},
+  },
+
   -- Mason for managing LSP servers, formatters, linters
   {
     "williamboman/mason.nvim",
@@ -83,13 +90,10 @@ return {
 
         -- Code actions
         vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "Code action" }))
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
 
         -- Diagnostics
         vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, vim.tbl_extend("force", opts, { desc = "Previous diagnostic" }))
         vim.keymap.set("n", "]d", vim.diagnostic.goto_next, vim.tbl_extend("force", opts, { desc = "Next diagnostic" }))
-        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, vim.tbl_extend("force", opts, { desc = "Show diagnostic" }))
-        vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, vim.tbl_extend("force", opts, { desc = "Diagnostics loclist" }))
 
         -- Navic support for winbar breadcrumbs
         if client.server_capabilities.documentSymbolProvider then

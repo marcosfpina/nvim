@@ -249,7 +249,7 @@ return {
     "stevearc/aerial.nvim",
     cmd = { "AerialToggle", "AerialOpen", "AerialInfo" },
     keys = {
-      { "<leader>ca", "<cmd>AerialToggle<cr>", desc = "Aerial (Code Outline)" },
+      { "<leader>co", "<cmd>AerialToggle<cr>", desc = "Aerial (Code Outline)" },
     },
     opts = {
       backends = { "treesitter", "lsp", "markdown", "man" },

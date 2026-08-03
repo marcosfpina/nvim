@@ -237,6 +237,10 @@ return {
     config = function(_, opts)
       require("nvim-treesitter.configs").setup(opts)
 
+      -- Fix nvim-treesitter master-branch predicates crashing on Nvim 0.12+
+      -- (see lua/core/ts-query-compat.lua)
+      require("core.ts-query-compat").setup()
+
       -- Context commentstring
       require("ts_context_commentstring").setup({
         enable_autocmd = false,

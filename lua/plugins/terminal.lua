@@ -36,7 +36,7 @@ return {
       shell = vim.o.shell,
       auto_scroll = true,
       float_opts = {
-        border = "curved",
+        border = "rounded",
         width = function()
           return math.floor(vim.o.columns * 0.9)
         end,
@@ -67,7 +67,7 @@ return {
         cmd = "lazygit",
         direction = "float",
         float_opts = {
-          border = "double",
+          border = "rounded",
           width = function()
             return math.floor(vim.o.columns * 0.95)
           end,
@@ -154,7 +154,7 @@ return {
     cmd = "Neogit",
     keys = {
       { "<leader>gn", "<cmd>Neogit<cr>", desc = "Neogit" },
-      { "<leader>gc", "<cmd>Neogit commit<cr>", desc = "Commit" },
+      { "<leader>gm", "<cmd>Neogit commit<cr>", desc = "Commit" },
       { "<leader>gp", "<cmd>Neogit pull<cr>", desc = "Pull" },
       { "<leader>gP", "<cmd>Neogit push<cr>", desc = "Push" },
     },

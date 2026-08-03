@@ -132,7 +132,7 @@ mapd("n", "<C-s>", "<cmd>w!<CR>", "Save file")
 
 -- Quit
 
-mapd("n", "<leader>q", "<cmd>q!<CR>", "Quit")
+mapd("n", "<leader>q", "<cmd>q<CR>", "Quit")
 
 -- Select all
 
@@ -252,15 +252,31 @@ end
 
 end, "Toggle spell checking")
 
+-- Toggle visible whitespace
+
+mapd("n", "<leader>tw", function()
+
+vim.opt.list = not vim.opt.list:get()
+
+if vim.opt.list:get() then
+
+vim.notify("Whitespace characters visible", vim.log.levels.INFO)
+
+else
+
+vim.notify("Whitespace characters hidden", vim.log.levels.INFO)
+
+end
+
+end, "Toggle visible whitespace")
+
 -- Navigate diagnostics
 
 mapd("n", "[d", vim.diagnostic.goto_prev, "Previous diagnostic")
 
 mapd("n", "]d", vim.diagnostic.goto_next, "Next diagnostic")
 
-mapd("n", "<leader>e", vim.diagnostic.open_float, "Show diagnostic in float")
-
-mapd("n", "<leader>qd", vim.diagnostic.setloclist, "Diagnostics to location list")
+mapd("n", "<leader>xd", vim.diagnostic.setloclist, "Diagnostics to location list")
 
 -- Terminal integration
 
