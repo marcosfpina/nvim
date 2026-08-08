@@ -151,9 +151,6 @@ return {
     },
     config = function(_, opts)
       require("noice").setup(opts)
-      pcall(function()
-        require("core.notify").install()
-      end)
     end,
     keys = {
       { "<leader>sn", "<cmd>Noice<cr>", desc = "Noice Messages" },

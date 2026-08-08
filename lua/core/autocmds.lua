@@ -155,7 +155,6 @@ autocmd(filetype_settings, "FileType", "markdown", function()
   vim.opt_local.wrap = true
   vim.opt_local.linebreak = true
   vim.opt_local.spell = false
-  vim.opt_local.conceallevel = 0
   vim.opt_local.colorcolumn = ""
 end, "Markdown-specific settings")
 
