@@ -15,6 +15,9 @@ return {
     cmd = "Mason",
     build = ":MasonUpdate",
     opts = {
+      -- NixOS: mason binaries are dynamically linked and can't run here;
+      -- keep them out of PATH so nix-provided servers are the only source
+      PATH = "skip",
       ui = {
         border = "rounded",
         icons = {
@@ -91,6 +94,36 @@ return {
         -- Code actions
         vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "Code action" }))
 
+        -- Inlay hints (native, nvim >= 0.10)
+        if client.server_capabilities.inlayHintProvider then
+          vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+          vim.keymap.set("n", "<leader>uh", function()
+            local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+            vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
+          end, vim.tbl_extend("force", opts, { desc = "Toggle inlay hints" }))
+        end
+
+        -- Highlight other references of the symbol under the cursor
+        if client.server_capabilities.documentHighlightProvider then
+          local hl_group = vim.api.nvim_create_augroup("LspDocumentHighlight" .. bufnr, { clear = true })
+          vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+            group = hl_group,
+            buffer = bufnr,
+            callback = function()
+              -- CursorHold also fires in visual mode; highlighting there reads
+              -- as ghost shadows over the selection
+              if vim.api.nvim_get_mode().mode:match("^[ni]") then
+                vim.lsp.buf.document_highlight()
+              end
+            end,
+          })
+          vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "BufLeave" }, {
+            group = hl_group,
+            buffer = bufnr,
+            callback = vim.lsp.buf.clear_references,
+          })
+        end
+
         -- Diagnostics
         vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, vim.tbl_extend("force", opts, { desc = "Previous diagnostic" }))
         vim.keymap.set("n", "]d", vim.diagnostic.goto_next, vim.tbl_extend("force", opts, { desc = "Next diagnostic" }))
@@ -108,7 +141,12 @@ return {
 
       -- Diagnostic configuration
       vim.diagnostic.config({
-        virtual_text = false,
+        virtual_text = {
+          spacing = 2,
+          prefix = "●",
+          source = "if_many",
+          severity = { min = vim.diagnostic.severity.WARN },
+        },
         signs = true,
         underline = {
           severity = vim.diagnostic.severity.ERROR,
@@ -149,6 +187,9 @@ return {
       if mason_lspconfig_ok then
         local setup_ok, _ = pcall(function()
           mason_lspconfig.setup({
+            -- NixOS: never auto-enable mason-installed servers (their binaries
+            -- don't run here); setup_server below gates on real PATH executables
+            automatic_enable = false,
             ensure_installed = {
               "lua_ls",
               "bashls",
@@ -172,6 +213,10 @@ return {
         logger.warn("mason-lspconfig not available, using manual LSP setup")
       end
 
+      -- Servers whose binary isn't on PATH: collected and logged once at the
+      -- end (quietly) instead of one popup per server on every startup
+      local skipped_servers = {}
+
       -- LSP Server setup function using new vim.lsp.config API
       local function setup_server(server_name, server_config)
         local default_config = {
@@ -180,6 +225,14 @@ return {
         }
 
         local config = server_config and vim.tbl_deep_extend("force", default_config, server_config) or default_config
+
+        -- NixOS: Mason binaries don't run here, so only enable servers whose
+        -- executable actually resolves on PATH (nix-provided or system-wide)
+        local exe = config.cmd and config.cmd[1]
+        if exe and vim.fn.executable(exe) == 0 then
+          table.insert(skipped_servers, server_name .. " (" .. exe .. ")")
+          return
+        end
 
         local setup_ok, _ = pcall(function()
           -- Define the LSP config using the new API
@@ -215,6 +268,7 @@ return {
               },
             },
             telemetry = { enable = false },
+            hint = { enable = true },
             completion = {
               callSnippet = "Replace",
             },
@@ -314,17 +368,52 @@ return {
       -- })
 
       -- Go
-      -- setup_server("gopls", {
-      --   settings = {
-      --     gopls = {
-      --       analyses = {
-      --         unusedparams = true,
-      --       },
-      --       staticcheck = true,
-      --       gofumpt = true,
-      --     },
-      --   },
-      -- })
+      setup_server("gopls", {
+        cmd = { "gopls" },
+        filetypes = { "go", "gomod", "gowork", "gotmpl" },
+        root_markers = { "go.work", "go.mod", ".git" },
+        settings = {
+          gopls = {
+            analyses = {
+              unusedparams = true,
+            },
+            staticcheck = true,
+            gofumpt = true,
+            hints = {
+              assignVariableTypes = true,
+              compositeLiteralFields = true,
+              constantValues = true,
+              functionTypeParameters = true,
+              parameterNames = true,
+              rangeVariableTypes = true,
+            },
+          },
+        },
+      })
+
+      -- Nix: prefer nixd, fall back to nil (both nix-provided; skipped if absent)
+      if vim.fn.executable("nixd") == 1 then
+        setup_server("nixd", {
+          cmd = { "nixd" },
+          filetypes = { "nix" },
+          root_markers = { "flake.nix", ".git" },
+          settings = {
+            nixd = {
+              formatting = { command = { "nixfmt" } },
+            },
+          },
+        })
+      else
+        setup_server("nil_ls", {
+          cmd = { "nil" },
+          filetypes = { "nix" },
+          root_markers = { "flake.nix", ".git" },
+        })
+      end
+
+      if #skipped_servers > 0 then
+        logger.debug("LSP servers skipped (not on PATH): " .. table.concat(skipped_servers, ", "))
+      end
 
       logger.info("LSP configuration complete!")
     end,

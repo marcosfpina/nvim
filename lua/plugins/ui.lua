@@ -99,7 +99,11 @@ return {
           highlights.CmpItemKindValue = { fg = colors.magenta }
           highlights.CmpItemKindConstant = { fg = colors.magenta }
           highlights.CmpItemKindSnippet = { fg = colors.orange }
-          highlights.Visual = { bg = "#22303a" }
+          highlights.Visual = { bg = "#264f78" }
+          highlights.VisualNOS = { bg = "#264f78" }
+          highlights.LspReferenceText = { bg = colors.bg_highlight }
+          highlights.LspReferenceRead = { bg = colors.bg_highlight }
+          highlights.LspReferenceWrite = { bg = colors.bg_highlight, underline = true }
           highlights.Search = { fg = colors.bg_dark, bg = colors.yellow }
           highlights.IncSearch = { fg = colors.bg_dark, bg = colors.orange }
           highlights.String = { fg = colors.yellow }

@@ -235,6 +235,8 @@ return {
       },
     },
     config = function(_, opts)
+      -- Tarball downloads break for some parsers here (jsonc); git is reliable
+      require("nvim-treesitter.install").prefer_git = true
       require("nvim-treesitter.configs").setup(opts)
 
       -- Fix nvim-treesitter master-branch predicates crashing on Nvim 0.12+
